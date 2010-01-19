@@ -52,9 +52,9 @@ RBPVar = function(data){
   return(rbpvar);
 }
 
-#MinRV
+#MinRV:
 MinRV = function(a){
-  q = xts(abs(as.numeric(a)),index(a)); #absolute value
+  q = as.zoo(abs(as.numeric(a))); #absolute value
   q = as.numeric(rollapply(q, width=2, FUN=min,by = 1, align="left"));
   N = length(q)+1; #number of obs
   minrv = (pi/(pi-2))*(N/(N-1))*sum(q^2);
@@ -63,7 +63,7 @@ return(minrv)
 
 #MedRV
 MedRV = function(a){
-  q = xts(abs(as.numeric(a)),index(a)); #absolute value
+  q = abs(as.numeric(a)); #absolute value
   q = as.numeric(rollmedian(q, k=3, align="center"));
   N = length(q) + 2;
   minrv = (pi/(6-4*sqrt(3)+pi))*(N/(N-2))*sum(q^2);
