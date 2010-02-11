@@ -158,7 +158,7 @@ RBPCov = function(ts){
   diag(cov) = diagonal;
 
   for(i in 2:n)		{
-  for(j in 1:(n-1))	{
+  for(j in 1:(i-1))	{
   cov[i,j] = cov[j,i] = RBPCov_bi(ts[,i],ts[,j]);
 				}
 				}
