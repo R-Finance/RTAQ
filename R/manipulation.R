@@ -1,10 +1,12 @@
 #MANIPULATION FUNCTIONS:
 
-TAQload = function(ticker,from,to,trades=TRUE,quotes=FALSE,datasource="V:\\Jobstudent\\TAQdata"){
+TAQload = function(ticker,from,to,trades=TRUE,quotes=FALSE,datasource=NULL){
 ##Function to load the taq data from a certain stock 
 #From&to (both included) should be in the format "%Y-%m-%d" e.g."2008-11-30"
-  dates = timeSequence(from,to, format = "%Y-%m-%d", FinCenter = "GMT")
+  dates = timeSequence(as.character(from),as.character(to), format = "%Y-%m-%d", FinCenter = "GMT")
   dates = dates[isBizday(dates, holidays = holidayNYSE(2004:2010))];
+
+  if( is.null(datasource)){print("Please provide the argument 'datasource' to indicate in which folder your data is stored")};
 
   if(trades){
   for(i in 1:length(dates)){

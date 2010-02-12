@@ -111,11 +111,12 @@ countzeroes = function( series )
 }
 
 
-ROWCov = function( R , seasadjR=R , alphaMCD = 0.75 )
+ROWCov = function( R , seasadjR=NULL , alphaMCD = 0.75, alpha = 0.05 )
 {
-   require(robustbase)
+   require(robustbase);
    # Function that computes the ROWQCov matrix, assumption of normality
    # R is a intraT*N matrix holding in column i de intraT returns of asset i
+   if( is.null( seasadjR) ){ seasadjR = R };
    intraT = nrow(R); N = ncol(R)
    perczeroes = apply( seasadjR , 2, countzeroes )/intraT;
    select = c(1:N)[perczeroes<0.5] 
@@ -127,12 +128,12 @@ ROWCov = function( R , seasadjR=R , alphaMCD = 0.75 )
    }else{
           print( c( "MCD cannot be calculated" ) )
    }
-   alpha = 0.05; k = qchisq(p=1-alpha,df=N) ; halfk = sqrt(k)
+   k = qchisq(p=1-alpha,df=N) ;
    outlierindic = outlyingness>k;
    weights = rep(1,intraT);  
    weights[outlierindic] =  k/outlyingness[outlierindic]; 
    wR = sqrt(weights)*R;
-   return( conhuber(di=N)*t(wR)%*%wR )
+   return( ( conhuber(di = N,alpha=alpha) * t(wR) %*% wR)/mean(weights) )
 }
 
 #Realized BiPower Covariation (RBPCov)
