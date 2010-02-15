@@ -1,12 +1,29 @@
 #MANIPULATION FUNCTIONS:
+TAQload = function(tickers,from,to,trades=TRUE,quotes=FALSE,datasource=NULL,variables=NULL){ 
+  if( is.null(datasource)){print("Please provide the argument 'datasource' to indicate in which folder your data is stored")}
 
-TAQload = function(ticker,from,to,trades=TRUE,quotes=FALSE,datasource=NULL){
+  if(!(trades&quotes)){#not both trades and quotes demanded
+  for( ticker in tickers ){
+      out = uniTAQload( ticker = ticker , from = from, to = to , trades=trades,quotes=quotes,datasource = datasource,variables=variables);
+      if( ticker == tickers[1] ){ totalout = out 
+	}else{ 
+	totalout = merge(totalout,out) }
+   }
+   }
+
+   if((trades&quotes)){#in case both trades and quotes
+	totalout=list();
+	totalout[[1]] = TAQload( ticker = tickers , from = from, to = to , trades=TRUE,quotes=FALSE,datasource = datasource,variables=variables);
+	totalout[[2]] = TAQload( ticker = tickers , from = from, to = to , trades=FALSE,quotes=TRUE,datasource = datasource,variables=variables);
+				}
+return(totalout);
+}
+
+uniTAQload = function(ticker,from,to,trades=TRUE,quotes=FALSE,datasource=NULL,variables=NULL){
 ##Function to load the taq data from a certain stock 
 #From&to (both included) should be in the format "%Y-%m-%d" e.g."2008-11-30"
   dates = timeSequence(as.character(from),as.character(to), format = "%Y-%m-%d", FinCenter = "GMT")
   dates = dates[isBizday(dates, holidays = holidayNYSE(2004:2010))];
-
-  if( is.null(datasource)){print("Please provide the argument 'datasource' to indicate in which folder your data is stored")};
 
   if(trades){
   for(i in 1:length(dates)){
@@ -17,8 +34,20 @@ TAQload = function(ticker,from,to,trades=TRUE,quotes=FALSE,datasource=NULL){
   if(file.exists(ifmissingname)){stop(paste("no trades available on ",dates[i],sep=""))}
   if(file.exists(ifmissingname)==FALSE){
   load(filename);
-  if(i==1){totaldata=tdata};
-  if(i>=1){totaldata=rbind(totaldata,tdata)};
+  if(i==1)	{
+	  if( is.null(variables)){totaldata=tdata;
+		}else{
+		allnames=as.vector(colnames(tdata));
+		selection = allnames%in%variables;
+		qq=(1:length(selection))[selection];
+		totaldata=tdata[,qq];
+		}	  
+		};
+  if(i>1){
+  if( is.null(variables)){totaldata=rbind(totaldata,tdata);
+		}else{
+	totaldata=rbind(totaldata,tdata[,qq])};
+		}
   rm(tdata);
 				}
 				}
@@ -33,8 +62,21 @@ TAQload = function(ticker,from,to,trades=TRUE,quotes=FALSE,datasource=NULL){
   if(file.exists(ifmissingname)){stop(paste("no quotes available on ",dates[i],sep=""))}
   if(file.exists(ifmissingname)==FALSE){
   load(filename);
-  if(i==1){totaldataq=qdata};
-  if(i>=1){totaldataq=rbind(totaldataq,qdata)};
+
+  if(i==1)	{
+	  if( is.null(variables)){totaldataq=qdata;
+		}else{
+		allnames=as.vector(colnames(qdata));
+		selection = allnames%in%variables;
+		qq=(1:length(selection))[selection];
+		totaldataq=qdata[,qq];
+		}	  
+		}
+  if(i>1){
+  if( is.null(variables)){totaldataq=rbind(totaldataq,qdata);
+		}else{
+	totaldataq=rbind(totaldataq,qdata[,qq])};
+		}
   rm(qdata);
 				}
 				}
