@@ -167,6 +167,21 @@ RBPCov = function(ts){
   return(cov)
 }
 
+tresholdcov = function(ts)	{
+  n=dim(ts)[1];						#number of observations
+  delta = 1/n;
+  rbpvars = apply(ts,2,FUN=RBPVar);			#bipower variation per stock
+  tresholds = 3*sqrt(rbpvars)*(delta^(0.49));	#treshold per stock
+  tresmatrix = matrix(rep(tresholds,n),ncol=length(tresholds),nrow=n,byrow=TRUE);
+  condition = ts>tresmatrix;
+  ts[condition] = 0;
+  cov = RCov(ts);
+
+return(cov);	
+				}
+
+
+
 #Realized Correlation (RCor)
 RCor = function(ts){
   ts = na.locf(ts,na.rm=FALSE);
