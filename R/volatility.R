@@ -18,28 +18,30 @@ univariateoutlyingness = function(data){
 }
 
 
-ROWVar = function(data){
-  returns = as.numeric(data)
-  L = length(data);				#number of observations
-  alpha = 0.05;
-  k = qchisq(p=1-alpha,df=1);
-  halfk = sqrt(k);
-  out = univariateoutlyingness(returns); 	#returns outlyingness vector
+ROWVar =
+function(returnseries, seasadjR = NULL, wfunction = "HR" , alphaMCD = 0.5, alpha = 0.001) 
+{
+    require(robustbase)
+    if (is.null(seasadjR)) {
+        seasadjR = R
+    }
+    intraT = length(R); N=1;
+    MCDcov = as.vector(covMcd( R , use.correction = FALSE )$raw.cov)
+    outlyingness = seasadjR^2/MCDcov    
+    k = qchisq(p = 1 - alpha, df = N)
+    outlierindic = outlyingness > k
+    weights = rep(1, intraT)
+    if( wfunction == "HR" ){
+       weights[outlierindic] = 0
+       wR = sqrt(weights) * R
+       return((conHR(di = N, alpha = alpha) * sum(wR^2))/mean(weights))
+    }
+    if( wfunction == "SR" ){
+       weights[outlierindic] = k/outlyingness[outlierindic]
+       wR = sqrt(weights) * R
+       return((conhuber(di = N, alpha = alpha) * sum(wR^2))/mean(weights))
+    }
 
-  outindicator = out > k; 			#true if outlier, else false
-  weights = matrix(rep(1,L),nrow=1);
-  weights[1,outindicator] = k/out[outindicator];
-
-  #correction factor:
-  lambda1 = -2*halfk*dnorm(halfk)+2*pnorm(halfk)-1;
-  lambda2 = 2*k*(1-pnorm(halfk));
-  lambda4 = 2*halfk*dnorm(halfk)-2*k*(1-pnorm(halfk));
-  c1_SR = 1/(lambda1+lambda2);
-  c2_SR = 1/(2*(pnorm(halfk)-0.5)+lambda4);
-
-  #result:
-  ROWVar = (c1_SR/c2_SR)*rowSums(weights*returns^2)/mean(weights);
-  return(ROWVar);
 }
 
 
@@ -69,8 +71,6 @@ MedRV = function(a){
   minrv = (pi/(6-4*sqrt(3)+pi))*(N/(N-2))*sum(q^2);
 return(minrv)
 }
-
-
 
 
 
@@ -111,29 +111,47 @@ countzeroes = function( series )
 }
 
 
-ROWCov = function( R , seasadjR=NULL , alphaMCD = 0.75, alpha = 0.05 )
+ROWCov =
+function (Nreturnseries, seasadjR = NULL, wfunction = "HR" , alphaMCD = 0.5, alpha = 0.001) 
 {
-   require(robustbase);
-   # Function that computes the ROWQCov matrix, assumption of normality
-   # R is a intraT*N matrix holding in column i de intraT returns of asset i
-   if( is.null( seasadjR) ){ seasadjR = R };
-   intraT = nrow(R); N = ncol(R)
-   perczeroes = apply( seasadjR , 2, countzeroes )/intraT;
-   select = c(1:N)[perczeroes<0.5] 
-   seasadjRselect = seasadjR[,select];
-   N = ncol(seasadjRselect); 
-   MCDobject =  try(covMcd(x=seasadjRselect,alpha=alphaMCD)) ; 
-   if(length(MCDobject$raw.mah)>1){
-          outlyingness = MCDobject$raw.mah; 
-   }else{
-          print( c( "MCD cannot be calculated" ) )
+    require(robustbase)
+    if( is.null(dim(R) )){ 
+          return( ROWVar( R , seasadjR = seasadjR , wfunction = wfunction , alphaMCD = alphaMCD , alpha = alpha ))
+    }else{
+       if (is.null(seasadjR)) {
+           seasadjR = R
+       }
+       intraT = nrow(R)
+       N = ncol(R)
+       perczeroes = apply(seasadjR, 2, countzeroes)/intraT
+       select = c(1:N)[perczeroes < 0.5]
+       seasadjRselect = seasadjR[, select]
+       N = ncol(seasadjRselect)
+       MCDobject = try(covMcd(x = seasadjRselect, alpha = alphaMCD))
+       if (length(MCDobject$raw.mah) > 1) {
+           betaMCD = 1-alphaMCD; asycor = betaMCD/pchisq( qchisq(betaMCD,df=N),df=N+2 )
+           MCDcov = (asycor*t(seasadjRselect[MCDobject$best,])%*%seasadjRselect[MCDobject$best,])/length(MCDobject$best);  
+           invMCDcov = solve(MCDcov) ; outlyingness = rep(0,intraT);
+           for( i in 1:intraT ){ 
+                    outlyingness[i] = matrix(seasadjRselect[i,],ncol=N)%*%invMCDcov%*%matrix(seasadjRselect[i,],nrow=N)    }
+       }
+       else {
+          print(c("MCD cannot be calculated")); stop();
+       }
+       k = qchisq(p = 1 - alpha, df = N)
+       outlierindic = outlyingness > k
+       weights = rep(1, intraT)
+       if( wfunction == "HR" ){
+          weights[outlierindic] = 0
+          wR = sqrt(weights) * R
+          return((conHR(di = N, alpha = alpha) * t(wR) %*% wR)/mean(weights))
+       }
+       if( wfunction == "SR" ){
+          weights[outlierindic] = k/outlyingness[outlierindic]
+          wR = sqrt(weights) * R
+          return((conhuber(di = N, alpha = alpha) * t(wR) %*% wR)/mean(weights))
+       }
    }
-   k = qchisq(p=1-alpha,df=N) ;
-   outlierindic = outlyingness>k;
-   weights = rep(1,intraT);  
-   weights[outlierindic] =  k/outlyingness[outlierindic]; 
-   wR = sqrt(weights)*R;
-   return( ( conhuber(di = N,alpha=alpha) * t(wR) %*% wR)/mean(weights) )
 }
 
 #Realized BiPower Covariation (RBPCov)
@@ -147,24 +165,26 @@ RBPCov_bi = function(ts1,ts2){
   return(result);
 }
 
-RBPCov = function(ts){
-  n = dim(ts)[2];
-  cov = matrix(rep(0,n*n),ncol=n);
-  diagonal =c()
-
-  for(i in 1:n)	{
-  diagonal[i] = RBPVar(ts[,i]);
-			}
-
-  diag(cov) = diagonal;
-
-  for(i in 2:n)		{
-  for(j in 1:(i-1))	{
-  cov[i,j] = cov[j,i] = RBPCov_bi(ts[,i],ts[,j]);
-				}
-				}
-
-  return(cov)
+RBPCov = 
+function (ts) 
+{
+    if( is.null(dim(ts) )){ 
+          return( RBPVar( ts ))
+    }else{
+       n = dim(ts)[2]
+       cov = matrix(rep(0, n * n), ncol = n)
+       diagonal = c()
+       for (i in 1:n) {
+          diagonal[i] = RBPVar(ts[, i])
+       }
+       diag(cov) = diagonal
+       for (i in 2:n) {
+           for (j in 1:(i - 1)) {
+               cov[i, j] = cov[j, i] = RBPCov_bi(ts[, i], ts[, j])
+           }
+       }
+       return(cov)
+   }
 }
 
 tresholdcov = function(ts)	{
