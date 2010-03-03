@@ -1,4 +1,22 @@
-convert = function(from,to,datasource,datadestination,trades=TRUE,quotes=TRUE,ticker,dir=F){
+##########HELPFUNCTION######
+readdata = function(path=NULL, extention="txt",header=F){
+#extention should either be "txt" or "csv"
+if(!(extention=="txt"|extention=="csv")){print("Please select a supported extention")}
+#load txt
+if(extention == "txt"){
+fullpath = paste(path,".txt",sep="");
+data = try(read.delim(fullpath,sep="",header=header,dec=","),silent=TRUE);
+}
+if(extention == "csv"){
+fullpath = paste(path,".csv",sep="");
+data = try(read.delim(fullpath,sep=",",header=header,dec="."),silent=TRUE);
+}
+
+return(data);
+}
+############################
+
+convert = function(from,to,datasource,datadestination,trades=TRUE,quotes=TRUE,ticker,dir=F,extention="txt",header=F,tradecolnames=NULL,format="%m/%d/%Y %H:%M:%S"){
   dates = timeSequence(from,to, format = "%Y-%m-%d", FinCenter = "GMT")
   dates = dates[isBizday(dates, holidays = holidayNYSE(2004:2010))];
 
@@ -13,13 +31,12 @@ convert = function(from,to,datasource,datadestination,trades=TRUE,quotes=TRUE,ti
   for(i in 1:length(dates)){
   datasource = paste(datasource,"\\",dates[i],sep="");
   datadestination = paste(datadestination,"\\",dates[i],sep="");
-  if(trades==TRUE){convert_trades(datasource,datadestination,ticker)}
-  if(trades==TRUE){convert_quotes(datasource,datadestination,ticker)}
+  if(trades==TRUE){convert_trades(datasource,datadestination,ticker,extention=extention,header=header,tradecolnames=tradecolnames,format=format)}
+  if(quotes==TRUE){convert_quotes(datasource,datadestination,ticker)}
   }
 }
 
-
-convert_trades = function(datasource,datadestination,ticker){
+convert_trades = function(datasource,datadestination,ticker,extention="txt",header=F,tradecolnames=NULL,format="%m/%d/%Y %H:%M:%S"){
   setwd(datasource);
   adjtime = function(z){ 
   zz = unlist(strsplit(z,":")); 
@@ -29,21 +46,25 @@ convert_trades = function(datasource,datadestination,ticker){
   }
 
   for(i in 1:length(ticker)){
-  klassen = c(rep("character",4),"real","real","character",rep("numeric",2));
-  tfile_name = paste(ticker[i],"_trades.txt",sep="");
-  tdata = try(read.delim(tfile_name,sep="",header=F,dec=",",colClasses=klassen),silent=TRUE);
-  error = tdata[1]== "Error in read.table(file = file, header = header, sep = sep, quote = quote,  : \n  no lines available in input\n";
+  tfile_name = paste(ticker[i],"_trades",sep="");
+  tdata = try(readdata(path=tfile_name, extention=extention,header=header),silent=TRUE);
+  error = is.null(dim(tdata)); 
 
-  if(error[1])
+  if(error)
   {print(paste("no trades for stock",ticker[i]));
   missingt = rbind(missingt,c(currentdate,ticker[i]));
   }
   if(error==FALSE){
 
   #assign column names
+  if(header==FALSE){
+  if(is.null(tradecolnames)){
   tradecolnames=c("SYMBOL","DATE","EX","TIME","PRICE","SIZE","COND","CR","G127");
-
-  colnames(tdata)=tradecolnames
+  colnames(tdata)= tradecolnames;
+  }else{
+  colnames(tdata)= tradecolnames;
+  }
+  }
 
   ### solve issue when there is no COND ###
   cond=tdata$COND[is.na(tdata$G127)];
@@ -61,9 +82,10 @@ convert_trades = function(datasource,datadestination,ticker){
   rm(oldtime,newtime);
 
   ##make xts object ##
-  tdobject=timeDate(paste(as.vector(tdata$DATE), as.vector(tdata$TIME)),format = "%m/%d/%Y %H:%M:%S",FinCenter = "GMT",zone="GMT");
+  tdobject=timeDate(paste(as.vector(tdata$DATE), as.vector(tdata$TIME)),format = format,FinCenter = "GMT",zone="GMT");
   tdata = xts(tdata,order.by=tdobject);
-  tdata = tdata[,c(1,3,5,6,7,8,9)];
+  tdata=tdata[,c("SYMBOL","EX","PRICE","SIZE","COND","CR","G127")];
+
   rm(tdobject);
   }
 
