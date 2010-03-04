@@ -16,7 +16,7 @@ return(data);
 }
 ############################
 
-convert = function(from,to,datasource,datadestination,trades=TRUE,quotes=TRUE,ticker,dir=F,extention="txt",header=F,tradecolnames=NULL,format="%m/%d/%Y %H:%M:%S"){
+convert = function(from,to,datasource,datadestination,trades=TRUE,quotes=TRUE,ticker,dir=F,extention="txt",header=F,tradecolnames=NULL,quotecolnames=NULL,format="%m/%d/%Y %H:%M:%S"){
   dates = timeSequence(from,to, format = "%Y-%m-%d", FinCenter = "GMT")
   dates = dates[isBizday(dates, holidays = holidayNYSE(2004:2010))];
 
@@ -32,7 +32,7 @@ convert = function(from,to,datasource,datadestination,trades=TRUE,quotes=TRUE,ti
   datasource = paste(datasource,"\\",dates[i],sep="");
   datadestination = paste(datadestination,"\\",dates[i],sep="");
   if(trades==TRUE){convert_trades(datasource,datadestination,ticker,extention=extention,header=header,tradecolnames=tradecolnames,format=format)}
-  if(quotes==TRUE){convert_quotes(datasource,datadestination,ticker)}
+  if(quotes==TRUE){convert_quotes(datasource,datadestination,ticker,extention=extention,header=header,quotecolnames=quotecolnames,format=format)}
   }
 }
 
@@ -96,7 +96,7 @@ convert_trades = function(datasource,datadestination,ticker,extention="txt",head
   }
 
 
-convert_quotes = function(datasource,datadestination,ticker){
+convert_quotes = function(datasource,datadestination,ticker,extention="txt",header=F,quotecolnames=NULL,format="%m/%d/%Y %H:%M:%S"){
   setwd(datasource);
   adjtime = function(z){ 
   zz = unlist(strsplit(z,":")); 
@@ -106,35 +106,42 @@ convert_quotes = function(datasource,datadestination,ticker){
   }
 
   for(i in 1:length(ticker)){
-  klassen = c(rep("character",4),rep("real",5));
-  qfile_name = paste(ticker[i],"_quotes.txt",sep="");
+  qfile_name = paste(ticker[i],"_quotes",sep="");
 
-  qdata=try(read.delim(qfile_name,sep="",header=F,dec=",",colClasses=klassen),silent=TRUE);
+  qdata=try(readdata(path=qfile_name, extention=extention,header=header),silent=TRUE);
+  error = is.null(dim(qdata)); 
 
-  error = qdata[1]== "Error in read.table(file = file, header = header, sep = sep, quote = quote,  : \n  no lines available in input\n";
-  if(error[1])
+  if(error)
   {print(paste("no quotes for stock",ticker[i])); 
   missingq=rbind(missingq,c(currentdate,ticker[i]));
   }
-  if((error==FALSE)[1]){
+  if(error==FALSE){
+
   #assign column names
-  tradecolnames=c("SYMBOL","DATE","EX","TIME","BID","BIDSIZE","OFFER","OFFERSIZE","MODE");
-  colnames(qdata)=tradecolnames
+  if(header==FALSE){
+  if(is.null(quotecolnames)){
+  quotecolnames = c("SYMBOL","DATE","EX","TIME","BID","BIDSIZE","OFFER","OFFERSIZE","MODE");  
+  colnames(qdata)= quotecolnames;
+  }else{
+  colnames(qdata)= quotecolnames;
+  }
+  }
 
   ####important because of data mistakes,must become something like "ticker"
-  qdata = qdata[qdata$SYMBOL==ticker[i],]
+  qdata = qdata[qdata$SYMBOL==ticker[i],];
 
-  ## solve issue that time notation is inconsequent (no 09h but 9h)
+  ## solve issue that time notation is inconsequent (no 09h but 9h):
   oldtime = as.matrix(as.vector(qdata$TIME));
   newtime = apply(oldtime,1,adjtime); #check if function in this file
   qdata$TIME = newtime;
   rm(oldtime,newtime);
 
   ##make xts object 
-  test=paste(as.vector(qdata$DATE), as.vector(qdata$TIME))
-  tdobject=timeDate(test,format = "%m/%d/%Y %H:%M:%S",FinCenter = "GMT",zone="GMT");
+  test = paste(as.vector(qdata$DATE), as.vector(qdata$TIME));
+  tdobject=timeDate(test,format = format,FinCenter = "GMT",zone="GMT");
+  tdobject=timeDate(test,format = format,FinCenter = "GMT",zone="GMT");
   qdata = xts(qdata,order.by=tdobject);
-  qdata = qdata[,c(1,3,5,6,7,8,9)];
+  qdata = qdata[,c("SYMBOL","EX","BID","BIDSIZE","OFFER","OFFERSIZE","MODE")];
   }
 
   xts_name = paste(ticker[i],"_quotes.RData",sep="");

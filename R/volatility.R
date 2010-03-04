@@ -19,7 +19,7 @@ univariateoutlyingness = function(data){
 
 
 ROWVar =
-function(returnseries, seasadjR = NULL, wfunction = "HR" , alphaMCD = 0.5, alpha = 0.001) 
+function(R, seasadjR = NULL, wfunction = "HR" , alphaMCD = 0.5, alpha = 0.001) 
 {
     require(robustbase)
     if (is.null(seasadjR)) {
@@ -112,7 +112,7 @@ countzeroes = function( series )
 
 
 ROWCov =
-function (Nreturnseries, seasadjR = NULL, wfunction = "HR" , alphaMCD = 0.5, alpha = 0.001) 
+function (R, seasadjR = NULL, wfunction = "HR" , alphaMCD = 0.5, alpha = 0.001) 
 {
     require(robustbase)
     if( is.null(dim(R) )){ 
