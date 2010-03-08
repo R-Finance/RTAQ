@@ -76,12 +76,21 @@ agg_price = function(ts,FUN = previoustick,on="minutes",k=5){
 ##k indicates the number of periods to aggregate over
   ts2 = aggregatets(ts, FUN=previoustick, on, k);
 
+  #adjustmet correct opening price
   date = strsplit(as.character(index(ts))," ")[[1]][1]
   realopen = "09:30:00";
   a = as.timeDate(paste(date,realopen));
   b = xts(ts[1],a);
-
   ts3 = c(b,ts2);
+
+  ##adjustment for correct closing price:
+  realclose = "16:00:00";
+  aa = as.timeDate(paste(date,realclose));
+  condition = index(ts3) < aa;
+  ts3=ts3[condition];
+  bb = xts(ts[length(ts)],aa);
+  ts3 = c(ts3,bb);
+
   return(ts3);
 }
 

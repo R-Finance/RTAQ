@@ -187,7 +187,7 @@ function (ts)
    }
 }
 
-tresholdcov = function(ts)	{
+thresholdcov = function(ts)	{
   n=dim(ts)[1];						#number of observations
   delta = 1/n;
   rbpvars = apply(ts,2,FUN=RBPVar);			#bipower variation per stock
@@ -196,11 +196,8 @@ tresholdcov = function(ts)	{
   condition = ts>tresmatrix;
   ts[condition] = 0;
   cov = RCov(ts);
-
 return(cov);	
 				}
-
-
 
 #Realized Correlation (RCor)
 RCor = function(ts){
