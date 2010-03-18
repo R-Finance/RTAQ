@@ -159,8 +159,8 @@ RBPCov_bi = function(ts1,ts2){
   n = length(ts1);
   a = abs(ts1+ts2);
   b = abs(ts1-ts2);  
-  first = a[1:(n-1)]*a[2:n];
-  last = b[1:(n-1)]*b[2:n];
+  first = as.numeric(a[1:(n-1)])*as.numeric(a[2:n]);
+  last = as.numeric(b[1:(n-1)])*as.numeric(b[2:n]);
   result =  (pi/8)*sum(first-last);
   return(result);
 }
