@@ -37,4 +37,5 @@ numeric
 }
 \author{ Jonathan Cornelissen and Kris Boudt}
 
-%R CMD Rdconv --type=html --output=RV.htm RV.Rd
+%cd C:\package\TradeAnalytics\pkg\RTAQ\man
+%R CMD Rdconv --type=html --output=sample_5minprices.htm sample_5minprices.Rd
