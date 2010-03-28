@@ -19,26 +19,28 @@ univariateoutlyingness = function(data){
 
 
 ROWVar =
-function(R, seasadjR = NULL, wfunction = "HR" , alphaMCD = 0.5, alpha = 0.001) 
+function(data, seasadjR = NULL, wfunction = "HR" , alphaMCD = 0.5, alpha = 0.001) 
 {
     require(robustbase)
     if (is.null(seasadjR)) {
-        seasadjR = R
+        seasadjR = data;
     }
-    intraT = length(R); N=1;
-    MCDcov = as.vector(covMcd( R , use.correction = FALSE )$raw.cov)
+
+    data = as.vector(data); seasadjR = as.vector(seasadjR);
+    intraT = length(data); N=1;
+    MCDcov = as.vector(covMcd( data , use.correction = FALSE )$raw.cov)
     outlyingness = seasadjR^2/MCDcov    
     k = qchisq(p = 1 - alpha, df = N)
     outlierindic = outlyingness > k
     weights = rep(1, intraT)
     if( wfunction == "HR" ){
        weights[outlierindic] = 0
-       wR = sqrt(weights) * R
+       wR = sqrt(weights) * data
        return((conHR(di = N, alpha = alpha) * sum(wR^2))/mean(weights))
     }
     if( wfunction == "SR" ){
        weights[outlierindic] = k/outlyingness[outlierindic]
-       wR = sqrt(weights) * R
+       wR = sqrt(weights) * data
        return((conhuber(di = N, alpha = alpha) * sum(wR^2))/mean(weights))
     }
 
@@ -48,15 +50,15 @@ function(R, seasadjR = NULL, wfunction = "HR" , alphaMCD = 0.5, alpha = 0.001)
 
 #Realized BiPower Variation (RBPVar) (RBPVar)
 RBPVar = function(data){
-  returns = as.numeric(data);
+  returns = as.vector(as.numeric(data));
   n = length(returns);
   rbpvar = (pi/2)*sum(abs(returns[1:(n-1)])*abs(returns[2:n]));
   return(rbpvar);
 }
 
 #MinRV:
-MinRV = function(a){
-  q = as.zoo(abs(as.numeric(a))); #absolute value
+MinRV = function(data){
+  q = as.zoo(abs(as.numeric(data))); #absolute value
   q = as.numeric(rollapply(q, width=2, FUN=min,by = 1, align="left"));
   N = length(q)+1; #number of obs
   minrv = (pi/(pi-2))*(N/(N-1))*sum(q^2);
@@ -64,8 +66,8 @@ return(minrv)
 }
 
 #MedRV
-MedRV = function(a){
-  q = abs(as.numeric(a)); #absolute value
+MedRV = function(data){
+  q = abs(as.numeric(data)); #absolute value
   q = as.numeric(rollmedian(q, k=3, align="center"));
   N = length(q) + 2;
   minrv = (pi/(6-4*sqrt(3)+pi))*(N/(N-2))*sum(q^2);
@@ -73,12 +75,12 @@ return(minrv)
 }
 
 
-
 ##Multivariate measures:
 #Realized Covariation (RCov):
-RCov = function(ts){
-  ts = na.locf(ts,na.rm=FALSE);
-  covariance = t(ts)%*%ts;
+RCov = function(data){
+  data = na.locf(data,na.rm=FALSE);
+  data = as.matrix(data);
+  covariance = t(data)%*%data;
   return(covariance);
 }
 
@@ -112,17 +114,18 @@ countzeroes = function( series )
 
 
 ROWCov =
-function (R, seasadjR = NULL, wfunction = "HR" , alphaMCD = 0.5, alpha = 0.001) 
+function (data, seasadjR = NULL, wfunction = "HR" , alphaMCD = 0.5, alpha = 0.001) 
 {
     require(robustbase)
-    if( is.null(dim(R) )){ 
-          return( ROWVar( R , seasadjR = seasadjR , wfunction = wfunction , alphaMCD = alphaMCD , alpha = alpha ))
+    if( is.null(dim(data) )){ 
+          return( ROWVar( data , seasadjR = seasadjR , wfunction = wfunction , alphaMCD = alphaMCD , alpha = alpha ))
     }else{
        if (is.null(seasadjR)) {
-           seasadjR = R
+           seasadjR = data
        }
-       intraT = nrow(R)
-       N = ncol(R)
+	 data = as.matrix(data); seasadjR = as.matrix(seasadjR);
+       intraT = nrow(data)
+       N = ncol(data)
        perczeroes = apply(seasadjR, 2, countzeroes)/intraT
        select = c(1:N)[perczeroes < 0.5]
        seasadjRselect = seasadjR[, select]
@@ -143,12 +146,12 @@ function (R, seasadjR = NULL, wfunction = "HR" , alphaMCD = 0.5, alpha = 0.001)
        weights = rep(1, intraT)
        if( wfunction == "HR" ){
           weights[outlierindic] = 0
-          wR = sqrt(weights) * R
+          wR = sqrt(weights) * data
           return((conHR(di = N, alpha = alpha) * t(wR) %*% wR)/mean(weights))
        }
        if( wfunction == "SR" ){
           weights[outlierindic] = k/outlyingness[outlierindic]
-          wR = sqrt(weights) * R
+          wR = sqrt(weights) * data
           return((conhuber(di = N, alpha = alpha) * t(wR) %*% wR)/mean(weights))
        }
    }
@@ -166,43 +169,46 @@ RBPCov_bi = function(ts1,ts2){
 }
 
 RBPCov = 
-function (ts) 
+function (data) 
 {
-    if( is.null(dim(ts) )){ 
-          return( RBPVar( ts ))
+    if( is.null(dim(data) )){ 
+          return( RBPVar( data ))
     }else{
-       n = dim(ts)[2]
+	 data  = as.matrix(data);
+       n = dim(data)[2]
        cov = matrix(rep(0, n * n), ncol = n)
        diagonal = c()
        for (i in 1:n) {
-          diagonal[i] = RBPVar(ts[, i])
+          diagonal[i] = RBPVar(data[, i])
        }
        diag(cov) = diagonal
        for (i in 2:n) {
            for (j in 1:(i - 1)) {
-               cov[i, j] = cov[j, i] = RBPCov_bi(ts[, i], ts[, j])
+               cov[i, j] = cov[j, i] = RBPCov_bi(data[, i], data[, j])
            }
        }
        return(cov)
    }
 }
 
-thresholdcov = function(ts)	{
-  n=dim(ts)[1];						#number of observations
+thresholdcov = function(data)	{
+  data=as.matrix(data);
+  n=dim(data)[1];						#number of observations
   delta = 1/n;
-  rbpvars = apply(ts,2,FUN=RBPVar);			#bipower variation per stock
+  rbpvars = apply(data,2,FUN=RBPVar);			#bipower variation per stock
   tresholds = 3*sqrt(rbpvars)*(delta^(0.49));	#treshold per stock
   tresmatrix = matrix(rep(tresholds,n),ncol=length(tresholds),nrow=n,byrow=TRUE);
-  condition = ts>tresmatrix;
-  ts[condition] = 0;
-  cov = RCov(ts);
+  condition = data>tresmatrix;
+  data[condition] = 0;
+  cov = RCov(data);
 return(cov);	
 				}
 
 #Realized Correlation (RCor)
-RCor = function(ts){
-  ts = na.locf(ts,na.rm=FALSE);
-  covariance = t(ts)%*%ts;
+RCor = function(data){
+  data = na.locf(data,na.rm=FALSE);
+  data = as.matrix(data);
+  covariance = t(data)%*%data;
   sdmatrix = sqrt(diag(diag(covariance)));
   rcor = solve(sdmatrix)%*%covariance%*%solve(sdmatrix);
   return(rcor);

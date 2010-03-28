@@ -1,7 +1,9 @@
 #TRADES CLEANUP WRAPPER
-tradescleanup = function(from="2008-01-03",to="2008-01-03",datasource,datadestination,ticker){
+tradescleanup = function(from="2008-01-03",to="2008-01-03",datasource,datadestination,ticker,exchange){
   dates = timeSequence(from,to, format = "%Y-%m-%d", FinCenter = "GMT");
   dates = dates[isBizday(dates, holidays = holidayNYSE(2004:2010))];
+  exchanges = exchange;
+  rm(exchange);
 
   for(j in 1:length(dates)){
   datasourcex = paste(datasource,"\\",dates[j],sep="");
@@ -12,7 +14,7 @@ tradescleanup = function(from="2008-01-03",to="2008-01-03",datasource,datadestin
   load(paste(datasourcex,"\\",dataname,sep=""));
 
   if(class(tdata)!="try-error"){
-  exchange = exchanges[(exchanges[,1]==ticker[i]),2];  
+  exchange = exchanges[exchanges==ticker[i]];  
 
   ##actual clean-up: 
   ##general:
@@ -78,9 +80,11 @@ tradescleanup_finalop = function(from="2008-01-03",to="2008-01-03",datasource,da
 }
 
 ##QUOTES CLEAN-UP WRAPPER
-quotescleanup = function(from,to,datasource,datadestination,ticker){
+quotescleanup = function(from,to,datasource,datadestination,ticker,exchange){
   dates = timeSequence(from,to, format = "%Y-%m-%d", FinCenter = "GMT");
   dates = dates[isBizday(dates, holidays = holidayNYSE(2004:2010))];
+  exchanges = exchange;
+  rm(exchange);
 
   for(j in 1:length(dates)){
   datasourcex = paste(datasource,"\\",dates[j],sep="");
@@ -91,7 +95,7 @@ quotescleanup = function(from,to,datasource,datadestination,ticker){
   load(paste(datasourcex,"\\",dataname,sep=""));
 
   if(class(qdata)!="try-error"){
-  exchange = exchanges[(exchanges[,1]==ticker[i]),2];  
+  exchange = exchanges[exchanges==ticker[i]];  
   if(exchange=="Q"){exchange="T"}
 
   ##actual clean-up:

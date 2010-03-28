@@ -185,7 +185,7 @@ rs = function(data,tdata,qdata){
 #tdata and qdata, the xts object containing the trades and quotes respectively
 
   ##First part solves the problem that unequal number of obs (in data and data2) is possible when computing the RS
-  data2 = matchtq(tdata,qdata,300,maxit=50);
+  data2 = matchtq(tdata,qdata,adjustment =300);
   if(dim(data2)[1]>dim(data)[1]){
   condition = as.vector(as.character(index(data2)))%in%as.vector(as.character(index(data)));
   data2 = subset(data2,condition,select=1:(dim(data)[2]));
@@ -445,7 +445,7 @@ liquidity = function(data,tdata,qdata){
 ##Function computes many liquidity measures and returns an xts object containing them
 
 ##First part solves the problem that unequal number of obs (in data and data2) is possible when computing the RS
-  data2 = matchtq(tdata,qdata,300,maxit=50);
+  data2 = matchtq(tdata,qdata,adjustment =300);
   if(dim(data2)[1]>dim(data)[1]){
   condition = as.vector(as.character(index(data2)))%in%as.vector(as.character(index(data)));
   data2 = subset(data2,condition,select=1:(dim(data)[2]));
