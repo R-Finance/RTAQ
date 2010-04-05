@@ -2,7 +2,7 @@
 \Rdversion{1.1}
 \alias{tradescleanup_finalop}
 \title{
-Perform a final cleaning procedures on trade data}
+Perform a final cleaning procedure on trade data}
 
 \description{
 Function performs cleaning procedure \code{\link{rmtradeoutliers}} 
