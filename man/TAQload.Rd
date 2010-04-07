@@ -23,11 +23,11 @@ TAQload(tickers,from,to,trades=TRUE,quotes=FALSE,datasource=NULL,variables=NULL)
 \arguments{
 \item{tickers}{ the ticker(s) to be loaded.
 It is recommended that you use only 1 ticker as input in case of non-synchronic observations. For synchronic data a vector of tickers can be used.}
-\item{from}{ first day to load e.g. "2008-01-30"}
-\item{to}{ last day to load e.g. "2008-01-30"}
-\item{trades}{ boolean, determines whether trades are extracted}
-\item{quotes}{ boolean, determines whether quotes are extracted}
-\item{datasource}{ path to folder in which the files are contained}
+\item{from}{ first day to load e.g. "2008-01-30".}
+\item{to}{ last day to load e.g. "2008-01-30".}
+\item{trades}{ boolean, determines whether trades are extracted.}
+\item{quotes}{ boolean, determines whether quotes are extracted.}
+\item{datasource}{ path to folder in which the files are contained.}
 \item{variables}{ a character (or character vector) containing the name(s) of the variable(s) that should be loaded, e.g. c("SYMBOL","PRICE"). By default all data is loaded.}
 }
 

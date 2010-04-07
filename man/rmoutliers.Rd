@@ -13,14 +13,13 @@ If type="advanced":  Function deletes entries for which the mid-quote deviates b
 median absolute deviations from the value closest to the midquote of
 these three options:
 \enumerate{
-\item Rolling centered median (excluding the observation under consid-
-eration)
+\item Rolling centered median (excluding the observation under consideration)
 \item Rolling median of the following "window" observations
 \item Rolling median of the previous "window" observations
 }
 
 The advantage of this procedure compared to the "standard" proposed
-by Barndorff-Nielsen et al. (2009) is that it will not incorrectly remove
+by Barndorff-Nielsen et al. (2010) is that it will not incorrectly remove
 large price jumps. Therefore this procedure has been set as the default
 for removing outliers.
 }
@@ -40,10 +39,8 @@ rmoutliers(qdata,maxi=10,window=50,type="advanced")}
 \value{xts object}
 
 \references{
-Barndorff-Nielsen, O. E., P. R. Hansen, A. Lunde, and N. Shephard (2009). 
-Multivariate realised kernels: consistent positive semi-denite
-estimators of the covariation of equity prices with noise and non-synchronous trading.
-working paper.
-}
+Barndorff-Nielsen, O. E., P. R. Hansen, A. Lunde, and N. Shephard (2010).
+Realized kernels in practice: Trades and quotes. Econometrics Journal,
+forthcoming.}
 
 \author{ Jonathan Cornelissen and Kris Boudt}

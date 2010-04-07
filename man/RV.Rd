@@ -11,12 +11,6 @@ Let \eqn{r_{t,i}} be a return (with \eqn{i=1,\ldots,M}) in period \eqn{t}.
 Then the Realized Variance is given by
 the sum of the squared intraday returns
 \deqn{\mbox{RV}_{t}= \sum_{i=1}^{M}r_{t,i}^{2}}
-
-\deqn{\sigma=variance(R)}{sigma=var(R)}
-
-\deqn{ES=-\bar{R} + \sqrt{\sigma} \cdot \frac{1}{c}\phi(z_{c}) }{VaR= -mean(R) + sqrt(sigma)*dnorm(z_c)/c}
-
-
 }
 
 \usage{

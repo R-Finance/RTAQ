@@ -3,41 +3,35 @@
 \alias{RTAQ}
 \docType{package}
 \title{
-What the package does (short line)
-~~ package title ~~
-}
+RTAQ: Tools for the analysis of trades and quotes in R}
+
 \description{
-More about what it does (maybe more than one line)
-~~ A concise (1-5 lines) description of the package ~~
-}
+The Trades and Quotes data of the New York Stock Exchange is a popular input for the implementation of intraday trading strategies, the measurement of liquidity and volatility and investigation of the market microstructure, among others. This package contains a collection of R functions to carefully clean and match the trades and quotes data, calculate ex post liquidity and volatility measures and detect price jumps in the data.}
+
 \details{
 \tabular{ll}{
 Package: \tab RTAQ\cr
 Type: \tab Package\cr
-Version: \tab 1.0\cr
-Date: \tab 2010-01-13\cr
-License: \tab What license is it under?\cr
-LazyLoad: \tab yes\cr
+Version: \tab 0.1\cr
+Date: \tab 2010-04-10 \cr
+License: \tab GPL \cr
+LazyLoad: \tab yes \cr
 }
-~~ An overview of how to use the package, including the most important ~~
-~~ functions ~~
 }
 \author{
-Who wrote it
+Kris Boudt, Jonathan Cornelissen
 
-Maintainer: Who to complain to <yourfault@somewhere.net>
-~~ The author and/or maintainer of the package ~~
+Maintainer: Jonathan Cornelissen <Jonathan.cornelissen@econ.kuleuven.be>
 }
 \references{
-~~ Literature or other references for background information ~~
+%~~ Literature or other references for background information ~~
 }
-~~ Optionally other standard keywords, one per line, from file KEYWORDS in ~~
-~~ the R documentation directory ~~
-\keyword{ package }
+
+\keyword{ package, trades, quotes, NYSE, high-frequency, volatility, liquidity }
 \seealso{
-~~ Optional links to other man pages, e.g. ~~
-~~ \code{\link[<pkg>:<pkg>-package]{<pkg>}} ~~
+%~~ Optional links to other man pages, e.g. ~~
+%~~ \code{\link[<pkg>:<pkg>-package]{<pkg>}} ~~
 }
 \examples{
-~~ simple examples of the most important functions ~~
+%~~ simple examples of the most important functions ~~
 }

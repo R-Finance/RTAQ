@@ -7,7 +7,7 @@ Retain only data from the stock exchange with the highest volume
 \description{
 Function returns an xts object containing only observations 
 of the exchange with highest
-value for "BIDSIZE" "OFFERSIZE", i.e. the highest volume.
+value for the sum of "BIDSIZE" and "OFFERSIZE", i.e. the highest volume.
 }
 
 \usage{
@@ -16,8 +16,8 @@ autoselectexchangeq(qdata)
 
 \arguments{
   \item{qdata}{ an xts object containing the time series data. 
-The object should have at least a column "EX", indicating the exchange symbol and
-columns "BIDSIZE" and "OFFERSIZE", indicating the volume 
+The object should have at least a column "EX", containing the exchange symbols and
+columns "BIDSIZE" and "OFFERSIZE", containing the volume 
 available at the bid and ask respectively. The chosen exchange is printed on the console.
 The possible exchanges are:
 \itemize{

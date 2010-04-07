@@ -31,10 +31,8 @@ tradescleanup_finalop(from="2008-01-03",to="2008-01-03",datasource,datadestinati
 This procedure is performed for each stock in "ticker".}
 
 \references{
-Barndorff-Nielsen, O. E., P. R. Hansen, A. Lunde, and N. Shephard (2009). 
-Multivariate realised kernels: consistent positive semi-denite
-estimators of the covariation of equity prices with noise and non-synchronous trading.
-working paper.
-}
+Barndorff-Nielsen, O. E., P. R. Hansen, A. Lunde, and N. Shephard (2010).
+Realized kernels in practice: Trades and quotes. Econometrics Journal,
+forthcoming.}
 
 \author{ Jonathan Cornelissen and Kris Boudt}
