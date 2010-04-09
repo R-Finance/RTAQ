@@ -13,17 +13,18 @@ return(c)
 
 
 ##AGGREGATION;
-aggregatets = function(ts, FUN=previoustick, on="minutes", k=1, weights=F){
+aggregatets = function(ts, FUN=previoustick, on="minutes", k=1, weights=NULL){
   #Valid values for the argument "on" include: “secs” (seconds), “seconds”, “mins” (minutes), “minutes”,“hours”, “days”, “weeks”.
 
   #Without weights:
-  if(weights[1]==F){
+  if(is.null(weights)){
   ep = endpoints(ts, on, k);
   ts2 = period.apply(ts,ep,FUN);  
   }
 
+
   #With weights:
-  if(weights[1]!=F){
+  if(!is.null(weights)){
   tsb = cbind(ts,weights);
   ep = endpoints(tsb, on, k);
   ts2 = period.apply(tsb,ep,FUN=weightedaverage);  
@@ -57,9 +58,6 @@ aggregatets = function(ts, FUN=previoustick, on="minutes", k=1, weights=F){
   ts3 = .xts(ts2,a);
 				}
 
-  else {print("YOU FOOL: still have to add other time periods for this function!")}
-
-
   #return to timeDate timestamps
   index(ts3) = as.timeDate(index(ts3));
 
@@ -68,7 +66,7 @@ aggregatets = function(ts, FUN=previoustick, on="minutes", k=1, weights=F){
 
 #PRICE (specificity: opening price and previoustick)
 
-agg_price = function(ts,FUN = previoustick,on="minutes",k=5){
+agg_price = function(ts,FUN = previoustick,on="minutes",k=1){
 ##Return new timeseries as xts object where
 ##first observation is always the opening price
 ##subsequent observations are the closing prices over the interval with endpoint the timestamp of the result
