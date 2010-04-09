@@ -1,20 +1,23 @@
-\name{RV}
+\name{RBPVar}
 \Rdversion{1.1}
-\alias{RV}
+\alias{RBPVar}
 \title{
-Realized Variance
+Realized BiPower Variance
 }
 \description{
-Function returns the Realized Variance (RV).
+Function returns the Realized BiPower Variance (RBPVar), defined in Barndorff-Nielsen and Shephard (2004).
 
 Let \eqn{r_{t,i}} be a return (with \eqn{i=1,\ldots,M}) in period \eqn{t}.
-Then the Realized Variance is given by
-the sum of the squared intraday returns
-\deqn{\mbox{RV}_{t}= \sum_{i=1}^{M}r_{t,i}^{2}}
+
+Then, the RBPVar is given by
+\deqn{
+\mbox{RBPVar}_{t}= \frac{\pi}{2} \sum_{i=2}^{M} |r_{t,i}| |r_{t,i-1}|
+}
+
 }
 
 \usage{
-RV(data);
+RBPVar(data)
 }
 
 \arguments{
@@ -29,7 +32,8 @@ numeric
 }
 
 \references{
-}
+Barndorff-Nielsen, O. and N. Shephard (2004). Power and bipower variation with 
+stochastic volatility and jumps. Journal of Financial Econometrics 2 (1), 1-37.}
 
 \author{ Jonathan Cornelissen and Kris Boudt}
 
