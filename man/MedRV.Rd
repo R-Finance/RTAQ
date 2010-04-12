@@ -25,6 +25,15 @@ MedRV(data)
 }
 
 \section{Details}{
+
+The MedRV belongs to the class of realized volatility measures in RTAQ 
+that use the series of high-frequency returns \eqn{r_{t,i}} of a day \eqn{t} 
+to produce an ex post estimate of the realized volatility of that day \eqn{t}. 
+MedRV is designed to be robust to price jumps. 
+The difference between RV and MedRV is an estimate of the realized jump 
+variability. Disentangling the continuous and jump components in RV 
+can lead to more precise volatility forecasts, 
+as shown in Andersen et al. (2007) and Corsi et al. (2008).
 }
 
 \value{
@@ -34,7 +43,14 @@ numeric
 \references{
 Andersen, T. G., D. Dobrev, and E. Schaumburg (2009). Jump-robust volatility 
 estimation using nearest neighbor truncation. NBER Working Paper No.
-15533.}
+15533.
+
+Andersen, T., T. Bollerslev, and F. Diebold (2007). Roughing it up: including
+jump components in the measurement, modelling and forecasting of return
+volatility. The Review of Economics and Statistics 89 (4), 701–720.
+
+Corsi, F., D. Pirino, and R. Renó (2008). Threshold Bipower Variation and the Impact of Jumps on Volatility Forecasting. Mimeo.
+}
 
 \author{ Jonathan Cornelissen and Kris Boudt}
 

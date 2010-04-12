@@ -31,14 +31,17 @@ ROWCov(data, seasadjR = NULL, wfunction = "HR" , alphaMCD = 0.5, alpha = 0.001)
 return series over period \eqn{t}, with \eqn{M} observations during \eqn{t}.}
   \item{seasadjR}{ a \eqn{(M x N)} matrix/zoo/xts object containing 
 the seasonaly adjusted returns. This is an optional argument.}
-   \item{wfunction}{ determines whether a Hard Rejection ("HR") or 
+   \item{wfunction}{ determines whether 
+a zero-one weight function (one if no jump is detected based on \eqn{d_{t,i}} and 0 otherwise)
+or 
 Soft Rejection ("SR") weight function is to be used.
-By default a Hard Rejection (wfunction = "HR") function is used.}
+By default a zero-one weight function (wfunction = "HR") is used.}
    \item{alphaMCD}{ a numeric parameter, controlling the size of 
 the subsets over which the determinant is minimized. 
 Allowed values are between 0.5 and 1 and 
-the default is 0.75. See Boudt et al. (2008) or "?covMcd" in the robustbase package.}
-   \item{alpha}{ is a parameter between 0 and 1, 
+the default is 0.75. See Boudt et al. (2008) or the \code{covMcd} function in the
+robustbase package.}
+   \item{alpha}{ is a parameter between 0 en 0.5, 
 that determines the rejection threshold value 
 (see Boudt et al. (2008) for details).}
 }
