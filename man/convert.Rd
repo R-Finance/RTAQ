@@ -5,7 +5,7 @@
 Convert trade or quote data into xts object saved in the RData format}
 
 \description{
-Function can convert both trade and quote data stored as "txt" or "csv" and
+Function converts both trade and quote data stored as "txt" or "csv" and
 structured as illustrated in the pdf documentation into xts-objects and 
 stores them in the "RData" format. 
 Subsequently, the data can be loaded into the R console by \code{\link{TAQload}}.

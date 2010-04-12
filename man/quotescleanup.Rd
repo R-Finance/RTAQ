@@ -2,7 +2,7 @@
 \Rdversion{1.1}
 \alias{quotescleanup}
 \title{
-Perform a bunch of cleaning procedures on quote data
+Cleans quote data
 }
 
 \description{

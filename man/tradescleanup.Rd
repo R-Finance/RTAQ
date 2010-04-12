@@ -2,7 +2,7 @@
 \Rdversion{1.1}
 \alias{tradescleanup}
 \title{
-Perform a number of cleaning procedures on trade data
+Cleans trade data
 }
 \description{
 The function performs a bunch of cleaning procedures for trade

@@ -5,7 +5,7 @@
 Extract data from an xts object for the Exchange Hours Only
 }
 \description{
-The function excerpts data within exchange trading hours
+The function returns data within exchange trading hours
 "daybegin" and "dayend". 
 }
 

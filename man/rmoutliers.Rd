@@ -34,7 +34,7 @@ rmoutliers(qdata,maxi=10,window=50,type="advanced")}
   \item{type}{should be "standard" or "advanced" (see description).}
 }
 
-\section{Details}{NOTE: This function works only correct if supplied input data consists of 1 day!!}
+\section{Details}{NOTE: This function works only correct if supplied input data consists of 1 day.}
 
 \value{xts object}
 
