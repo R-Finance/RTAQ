@@ -1,24 +1,23 @@
-\name{es}
+\name{di_diff}
 \Rdversion{1.1}
-\alias{es}
+\alias{di_diff}
 \title{
-Effective spread
+Depth imbalance (as a difference)
 }
 
 \description{
-Function returns an xts object with the effective spread, defined as
+Function returns an xts object with the depth imbalance (as a difference), defined as
 
 \deqn{
-\mbox{Effective Spread}_t =  2*D_t*(\mbox{PRICE}_{t} - \frac{(\mbox{BID}_{t}+\mbox{OFFER}_{t})}{2}),
+\mbox{depth imbalace (as difference)}_t =  \frac{D_t *(\mbox{OFFERSIZE}_{t}-\mbox{BIDSIZE}_{t})}{(\mbox{OFFERSIZE}_{t}+\mbox{BIDSIZE}_{t})},
 }
-
 where \eqn{D_t} is 1 (-1) if \eqn{trade_t} was buy (sell) (see Bhoehmer (2005), Bessembinder (2003)). 
 Note that the input of this function consists of the matched trades and quotes,
  so this is were the time indication refers to (and thus not to the registered quote timestamp).
 }
 
 \usage{
-es(data);
+di_diff(data);
 }
 
 \arguments{
@@ -31,12 +30,12 @@ xts object, containing joined trades and quotes (e.g. using \code{\link{matchtq(
 }
 
 \value{
-an xts object containing the effective spread.
+an xts object containing the depth imbalace (as difference).
 }
 
 \references{
-Bessembinder, H. (2003). Issues in assessing trade execution costs. Journal of
-Financial Markets, 223-257.
+Bessembinder, H. (2003). Issues in assessing trade execution costs. 
+Journal of Financial Markets, 223-257.
 
 Boehmer, E. (2005). Dimensions of execution quality: Recent evidence for US
 equity markets. Journal of Financial Economics 78 (3), 553-582.

@@ -1,39 +1,36 @@
-\name{rs}
+\name{tspread}
 \Rdversion{1.1}
-\alias{rs}
+\alias{tspread}
 \title{
-Realized spread
+Half traded spread
 }
 
 \description{
-Function returns an xts object with the realized spread, defined as
+Function returns an xts object with the half traded spread, defined as
 
 \deqn{
-\mbox{Realized Spread}_t =  2*D_t*(\mbox{PRICE}_{t} - \frac{(\mbox{BID}_{t+300}+\mbox{OFFER}_{t+300})}{2}),
+\mbox{half traded spread}_t =  D_t*(\mbox{PRICE}_{t} - \frac{(\mbox{BID}_{t}+\mbox{OFFER}_{t})}{2}),
 }
-
 where \eqn{D_t} is 1 (-1) if \eqn{trade_t} was buy (sell) (see Bhoehmer (2005), Bessembinder (2003)). 
-Note that the time indication of \eqn{\mbox{BID}} and \eqn{\mbox{OFFER}} refers 
-to the registered time of the quote in seconds.
+Note that the input of this function consists of the matched trades and quotes,
+ so this is were the time indication refers to (and thus not to the registered quote timestamp).
 }
 
 \usage{
-rs(data,tdata,qdata);
+tspread(data);
 }
 
 \arguments{
   \item{data}{ 
 xts object, containing joined trades and quotes (e.g. using \code{\link{matchtq()}})
 }
-  \item{tdata}{xts object, containing the trade data. See pdf documentation for more details.}
-  \item{qdata}{xts object, containing the quote data. See pdf documentation for more details.}
 }
 
 \section{Details}{
 }
 
 \value{
-an xts object containing the realized spread.
+an xts object containing the half traded spread.
 }
 
 \references{
