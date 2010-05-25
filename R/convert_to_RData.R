@@ -1,24 +1,38 @@
 ##########HELPFUNCTION######
-readdata = function(path=NULL, extention="txt",header=F){
+readdata = function(path=NULL, extention="txt",header=F,dims=0){
 #extention should either be "txt" or "csv"
 if(!(extention=="txt"|extention=="csv")){print("Please select a supported extention")}
+colnames = rep("x",dims);
 #load txt
 if(extention == "txt"){
 fullpath = paste(path,".txt",sep="");
-data = try(read.delim(fullpath,sep="",header=header,dec=","),silent=TRUE);
+data = try(read.delim(fullpath,sep="",header=header,dec=",",col.names=colnames),silent=TRUE);
+
+  if(is.null(dim(data))){
+  data = try(read.delim(fullpath,sep="",header=header,dec=",",col.names=c(colnames,"EXTRA")),silent=TRUE);
+  if(is.null(dim(data))){data=matrix(nrow=0,ncol=9);
+  }else{data=data[,(-dim(data)[2])]}
+  }
 }
+
 if(extention == "csv"){
 fullpath = paste(path,".csv",sep="");
-data = try(read.delim(fullpath,sep=",",header=header,dec="."),silent=TRUE);
-}
+data = try(read.delim(fullpath,sep=",",header=header,dec=".",col.names=colnames),silent=TRUE);
 
+  if(is.null(dim(data))){
+  data = try(read.delim(fullpath,sep=",",header=header,dec=".",col.names=c(colnames,"EXTRA")),silent=TRUE);
+  if(is.null(dim(data))){data=matrix(nrow=0,ncol=9);
+  }else{data=data[,(-dim(data)[2])]}
+  }
+}
 return(data);
 }
-############################
 
+############################
 convert = function(from,to,datasource,datadestination,trades=TRUE,quotes=TRUE,ticker,dir=F,extention="txt",header=F,tradecolnames=NULL,quotecolnames=NULL,format="%m/%d/%Y %H:%M:%S"){
   dates = timeSequence(from,to, format = "%Y-%m-%d", FinCenter = "GMT")
   dates = dates[isBizday(dates, holidays = holidayNYSE(2004:2010))];
+  missingt=missingq=matrix(ncol=2,nrow=0);
 
   if(dir)	{
   dir.create(datadestination);
@@ -27,16 +41,17 @@ convert = function(from,to,datasource,datadestination,trades=TRUE,quotes=TRUE,ti
   dir.create(dirname);
  					}			
 		}
-  
+
   for(i in 1:length(dates)){
-  datasource = paste(datasource,"\\",dates[i],sep="");
-  datadestination = paste(datadestination,"\\",dates[i],sep="");
-  if(trades==TRUE){convert_trades(datasource,datadestination,ticker,extention=extention,header=header,tradecolnames=tradecolnames,format=format)}
-  if(quotes==TRUE){convert_quotes(datasource,datadestination,ticker,extention=extention,header=header,quotecolnames=quotecolnames,format=format)}
+  datasourcex = paste(datasource,"\\",dates[i],sep="");
+  datadestinationx = paste(datadestination,"\\",dates[i],sep="");
+  if(trades==TRUE){convert_trades(datasourcex,datadestinationx,ticker,extention=extention,header=header,tradecolnames=tradecolnames,format=format)}
+  if(quotes==TRUE){convert_quotes(datasourcex,datadestinationx,ticker,extention=extention,header=header,quotecolnames=quotecolnames,format=format)}
   }
 }
 
 convert_trades = function(datasource,datadestination,ticker,extention="txt",header=F,tradecolnames=NULL,format="%m/%d/%Y %H:%M:%S"){
+
   setwd(datasource);
   adjtime = function(z){ 
   zz = unlist(strsplit(z,":")); 
@@ -46,13 +61,13 @@ convert_trades = function(datasource,datadestination,ticker,extention="txt",head
   }
 
   for(i in 1:length(ticker)){
-  tfile_name = paste(ticker[i],"_trades",sep="");
-  tdata = try(readdata(path=tfile_name, extention=extention,header=header),silent=TRUE);
-  error = is.null(dim(tdata)); 
+  tfile_name = paste(datasource,"\\",ticker[i],"_trades",sep="");
+  tdata = try(readdata(path=tfile_name, extention=extention,header=header,dims=9),silent=TRUE);
+  error = dim(tdata)[1]==0; 
 
   if(error)
   {print(paste("no trades for stock",ticker[i]));
-  missingt = rbind(missingt,c(currentdate,ticker[i]));
+  missingt = rbind(missingt,c(datasource,ticker[i]));
   }
   if(error==FALSE){
 
@@ -71,8 +86,8 @@ convert_trades = function(datasource,datadestination,ticker,extention="txt",head
   cr=tdata$CR[is.na(tdata$G127)];
 
   tdata$COND[is.na(tdata$G127)]=0;
-  tdata$CR[is.na(tdata$G127)]= cond;
-  tdata$G127[is.na(tdata$G127)] = cr;
+  tdata$CR[is.na(tdata$G127)]= as.character(cond);
+  tdata$G127[is.na(tdata$G127)] = as.character(cr);
   rm(cond,cr);
 
   ## solve issue that time notation is inconsequent (no 09h but 9h)
@@ -92,6 +107,7 @@ convert_trades = function(datasource,datadestination,ticker,extention="txt",head
   xts_name = paste(ticker[i],"_trades.RData",sep="");
   setwd(datadestination);
   save(tdata, file = xts_name);
+
   }
   }
 
@@ -106,14 +122,14 @@ convert_quotes = function(datasource,datadestination,ticker,extention="txt",head
   }
 
   for(i in 1:length(ticker)){
-  qfile_name = paste(ticker[i],"_quotes",sep="");
+  qfile_name = paste(datasource,"\\",ticker[i],"_quotes",sep="");
 
-  qdata=try(readdata(path=qfile_name, extention=extention,header=header),silent=TRUE);
-  error = is.null(dim(qdata)); 
+  qdata=try(readdata(path=qfile_name, extention=extention,header=header,dims=9),silent=TRUE);
+  error = dim(qdata)[1]==0; 
 
   if(error)
   {print(paste("no quotes for stock",ticker[i])); 
-  missingq=rbind(missingq,c(currentdate,ticker[i]));
+  missingq=rbind(missingq,c(datasource,ticker[i]));
   }
   if(error==FALSE){
 
@@ -149,6 +165,3 @@ convert_quotes = function(datasource,datadestination,ticker,extention="txt",head
   save(qdata, file = xts_name);
   }
   }
-
-
-

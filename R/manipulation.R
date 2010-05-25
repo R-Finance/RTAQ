@@ -308,7 +308,6 @@ prop_price_impact = function(data){
   return(prop_pi_xts);
 }
 
-
 tspread = function(data){
 #returns the half traded spread as xts object
   bid = as.numeric(data$BID);
@@ -440,7 +439,6 @@ mq_return_abs = function(data){
   return(mq_return_abs_xts);
 }
 
-
 liquidity = function(data,tdata,qdata){
 ##Function computes many liquidity measures and returns an xts object containing them
 
@@ -457,52 +455,52 @@ liquidity = function(data,tdata,qdata){
   data2 = subset(data2,as.vector(as.character(index(data2)))%in%as.vector(as.character(index(data))),select=1:(dim(data)[2]));
   }
 
-##Variables needed for the computation of the liquidity measures
-  bid = as.numeric(data$BID);
-  offer = as.numeric(data$OFFER);
-  midpoints = (bid + offer)/2;
-  price = as.numeric(data$PRICE);
-  size = as.numeric(data$SIZE);
-  d = gettradedir(data);
-  bidsize = as.numeric(data$BIDSIZE);
-  offersize = as.numeric(data$OFFERSIZE);
-  return = c(0,log(price[2:length(price)])-log(price[1:length(price)-1]));
-  mq_return = mq_return(data);
-  midpoints2 = (as.numeric(data2$BID)+as.numeric(data2$OFFER))/2;
-
-##Liquidity measures:
-  es = 2*d*(price-midpoints);
-  rs = 2*d*(price-midpoints2);
-  value_trade = price*size;
-  signed_value_trade = d*price*size;
-  signed_trade_size = d*size;
-  di_diff = (d*(offersize-bidsize))/(offersize+bidsize);
-  di_div = (offersize/bidsize)^d;
-  pes = 100*es/midpoints;
-  prs = 100*rs/midpoints;
-  price_impact = (es-rs)/2;
-  prop_price_impact = (100*price_impact)/midpoints;
-  tspread = d*(price-midpoints);
-  pts = ts/midpoints;
-  p_return_sqr = return^2;
-  p_return_abs = abs(return);
-  qs = offer-bid;
-  pqs = 100*qs/midpoints;
-  logqs = log(offer/bid);
-  logsize = log(bidsize)+log(offersize);
-  qslope = qs/logsize;
-  logqslope = logqs/logsize;
-  mq_return_sqr = mq_return^2;
-  mq_return_abs = abs(mq_return);
-
-liquid = cbind(es,rs,value_trade,signed_value_trade,di_diff,di_div,pes,prs,price_impact,
-prop_price_impact,ts,pts,p_return_sqr,p_return_abs,qs,pqs,logqs,logsize,qslope,
-logqslope,mq_return_sqr,mq_return_abs);
-
-names = c("es","rs","value_trade","signed_value_trade","di_diff","di_div","pes","prs","price_impact","prop_price_impact","ts","pts","p_return_sqr","p_return_abs","qs","pqs","logqs","logsize","qslope","logqslope","mq_return_sqr","mq_return_abs");
-colnames(liquid) = names;
-
-return(liquid);
+    bid = as.numeric(data$BID)
+    offer = as.numeric(data$OFFER)
+    midpoints = (bid + offer)/2
+    price = as.numeric(data$PRICE)
+    size = as.numeric(data$SIZE)
+    d = gettradedir(data)
+    bidsize = as.numeric(data$BIDSIZE)
+    offersize = as.numeric(data$OFFERSIZE)
+    return = c(0, log(price[2:length(price)]) - log(price[1:length(price) - 
+        1]))
+    mq_return = mq_return(data)
+    midpoints2 = (as.numeric(data2$BID) + as.numeric(data2$OFFER))/2
+    es = 2 * d * (price - midpoints)
+    rs = 2 * d * (price - midpoints2)
+    value_trade = price * size
+    signed_value_trade = d * price * size
+    signed_trade_size = d * size
+    di_diff = (d * (offersize - bidsize))/(offersize + bidsize)
+    di_div = (offersize/bidsize)^d
+    pes = 100 * es/midpoints
+    prs = 100 * rs/midpoints
+    price_impact = (es - rs)/2
+    prop_price_impact = (100 * price_impact)/midpoints
+    tspread = d * (price - midpoints)
+    pts = tspread/midpoints
+    p_return_sqr = return^2
+    p_return_abs = abs(return)
+    qs = offer - bid
+    pqs = 100 * qs/midpoints
+    logqs = log(offer/bid)
+    logsize = log(bidsize) + log(offersize)
+    qslope = qs/logsize
+    logqslope = logqs/logsize
+    mq_return_sqr = mq_return^2
+    mq_return_abs = abs(mq_return)
+    liquid = cbind(es, rs, value_trade, signed_value_trade, di_diff, 
+        di_div, pes, prs, price_impact, prop_price_impact, tspread, 
+        pts, p_return_sqr, p_return_abs, qs, pqs, logqs, logsize, 
+        qslope, logqslope, mq_return_sqr, mq_return_abs)
+    names = c("es", "rs", "value_trade", "signed_value_trade", 
+        "di_diff", "di_div", "pes", "prs", "price_impact", "prop_price_impact", 
+        "tspread", "pts", "p_return_sqr", "p_return_abs", "qs", "pqs", 
+        "logqs", "logsize", "qslope", "logqslope", "mq_return_sqr", 
+        "mq_return_abs");
+    colnames(liquid) = names;
+    return(liquid);
 }
 
 ##help_function:
