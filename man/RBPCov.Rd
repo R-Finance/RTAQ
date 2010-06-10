@@ -15,11 +15,11 @@ the number of intraday returns.
 The RBPCov is defined as the process whose value at time \eqn{t}
 is the \eqn{N}-dimensional square matrix with \eqn{k,q}-th element equal to
 \deqn{
-\mbox{RBPCov}[k,q]_t = \frac{\pi}{8} \bigg( & \sum_{i=2}^{M} 
+\mbox{RBPCov}[k,q]_t = \frac{\pi}{8} \bigg( \sum_{i=2}^{M} 
 \left|
-r_{(k)t,i} + r_{(q)t,i} \right| \ \left| r_{(k)t,i-1} + r_{(q)t,i-1} \right| &  \\
-&- \left| r_{(k)t,i}  - r_{(q)t,i} \right| \ \left|
-r_{(k)t,i-1} - r_{(q)t,i-1} \right|  \bigg),&
+r_{(k)t,i} + r_{(q)t,i} \right| \ \left| r_{(k)t,i-1} + r_{(q)t,i-1} \right|   \\
+- \left| r_{(k)t,i}  - r_{(q)t,i} \right| \ \left|
+r_{(k)t,i-1} - r_{(q)t,i-1} \right|  \bigg),
 }
 where \eqn{r_{(k)t,i}} is the
 \eqn{k}-th component of the return vector \eqn{r_{i,t}}.

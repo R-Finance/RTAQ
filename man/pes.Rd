@@ -23,7 +23,7 @@ pes(data);
 
 \arguments{
   \item{data}{ 
-xts object, containing joined trades and quotes (e.g. using \code{\link{matchtq()}})
+xts object, containing joined trades and quotes (e.g. using \code{\link{matchtq}})
 }
 }
 

@@ -14,7 +14,7 @@ and \code{\link{quotescleanup}}.
 }
 
 \usage{
-tradescleanup_finalop(from="2008-01-03",to="2008-01-03",datasource,datadestination,ticker)
+tradescleanup_finalop(from,to,datasource,datadestination,ticker)
 }
 
 \arguments{

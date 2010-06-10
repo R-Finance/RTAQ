@@ -12,7 +12,9 @@ Subsequently, the data can be loaded into the R console by \code{\link{TAQload}}
 }
 
 \usage{
-convert(from,to,datasource,datadestination,trades=TRUE,quotes=TRUE,ticker,dir=F,extention="txt",header=F,tradecolnames=NULL,quotecolnames=NULL,format="\%m/\%d/\%Y \%H:\%M:\%S")
+convert(from,to,datasource,datadestination,trades=TRUE,quotes=TRUE,\\
+ticker,dir=F,extention="txt",header=F,tradecolnames=NULL,\\
+quotecolnames=NULL,format="\%m/\%d/\%Y \%H:\%M:\%S")
 }
 
 \arguments{

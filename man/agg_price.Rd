@@ -17,7 +17,7 @@ agg_price = function(ts,FUN = previoustick,on="minutes",k=5)
 \arguments{
 \item{ts}{ xts object, containing the original time series.}
 \item{FUN}{ function to apply over each interval. By default, previous tick aggregation is done.}
-\item{on}{ character, indicating the time scale in which "k" is expressed. Possible values are: “secs”, “seconds”, “mins”, “minutes”,“hours”.}
+\item{on}{ character, indicating the time scale in which "k" is expressed. Possible values are: "secs", "seconds", "mins", "minutes","hours".}
 \item{k}{ positive integer, indicating the number of periods to aggregate over. E.g. to aggregate a 
 xts object to the 5 minute frequency set k=5 and on="minutes".}
 }

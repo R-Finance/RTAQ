@@ -21,7 +21,7 @@ liquidity(data,tdata,qdata)
 
 \arguments{
   \item{data}{ 
-xts object, containing joined trades and quotes (e.g. using \code{\link{matchtq()}})
+xts object, containing joined trades and quotes (e.g. using \code{\link{matchtq}})
 }
 \item{tdata}{ xts-object containing the trade data. Please see pdf documentation for the recommended format.}
 \item{qdata}{ xts-object containing the quote data. Please see pdf documentation for the recommended format.}

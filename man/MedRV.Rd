@@ -47,9 +47,9 @@ estimation using nearest neighbor truncation. NBER Working Paper No.
 
 Andersen, T., T. Bollerslev, and F. Diebold (2007). Roughing it up: including
 jump components in the measurement, modelling and forecasting of return
-volatility. The Review of Economics and Statistics 89 (4), 701–720.
+volatility. The Review of Economics and Statistics 89 (4), 701-720.
 
-Corsi, F., D. Pirino, and R. Renó (2008). Threshold Bipower Variation and the Impact of Jumps on Volatility Forecasting. Mimeo.
+Corsi, F., D. Pirino, and R. Reno (2008). Threshold Bipower Variation and the Impact of Jumps on Volatility Forecasting. Mimeo.
 }
 
 \author{ Jonathan Cornelissen and Kris Boudt}
