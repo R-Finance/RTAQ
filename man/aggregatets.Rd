@@ -25,6 +25,8 @@ By default, no weighting scheme is used.
 When you assign an xts object with wheights to this argument, a weighted mean is taken over each interval. 
 Of course, the weights should have the same timestamps as the supplied time series.
 }
+\item{dropna}{ boolean, which determines whether empty intervals should be dropped.
+By default, an NA is returned in case an interval is empty.}
 }
 
 \section{Details}{
@@ -37,7 +39,9 @@ for on="seconds"/"minutes"/"hours",
 the last observation up to that point, excluding the value at 09:35:00 itself.
 
 Please Note:
-In case an interval is empty, it is omitted. (Possibly, you expect an NA but this isn't the case)
+In case an interval is empty, by default an NA is returned. In case e.g. previous 
+tick aggregation it makes sense to fill these NA's by the function \code{na.locf}
+(last observation carried forward) from the zoo package.
 }
 
 \value{

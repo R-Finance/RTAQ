@@ -13,55 +13,62 @@ return(c)
 
 
 ##AGGREGATION;
-aggregatets = function(ts, FUN=previoustick, on="minutes", k=1, weights=NULL){
+aggregatets = function (ts, FUN = previoustick, on = "minutes", k = 1, weights = NULL,dropna=F)
+{
   #Valid values for the argument "on" include: “secs” (seconds), “seconds”, “mins” (minutes), “minutes”,“hours”, “days”, “weeks”.
 
-  #Without weights:
-  if(is.null(weights)){
-  ep = endpoints(ts, on, k);
-  ts2 = period.apply(ts,ep,FUN);  
-  }
+    if (is.null(weights)) {
+        ep = endpoints(ts, on, k);
+        ts2 = period.apply(ts, ep, FUN);
+    }
+    if (!is.null(weights)) {
+        tsb = cbind(ts, weights)
+        ep = endpoints(tsb, on, k)
+        ts2 = period.apply(tsb, ep, FUN = weightedaverage)
+    }
+    if (on == "minutes" | on == "mins" | on == "secs" | on == 
+        "seconds") {
+        if (on == "minutes" | on == "mins") {
+            secs = k * 60
+        }
+        if (on == "secs" | on == "seconds") {
+            secs = k
+        }
+        a = .index(ts2) + (secs - .index(ts2)%%secs)
+        ts3 = .xts(ts2, a)
+    }
+    if (on == "hours") {
+        secs = 3600
+        a = .index(ts2) + (secs - .index(ts2)%%secs)
+        ts3 = .xts(ts2, a)
+    }
+    if (on == "days") {
+        secs = 24 * 3600
+        a = .index(ts2) + (secs - .index(ts2)%%secs) - (24 * 
+            3600)
+        ts3 = .xts(ts2, a)
+    }
+    if (on == "weeks") {
+        secs = 24 * 3600 * 7
+        a = (.index(ts2) + (secs - (.index(ts2) + (3L * 86400L))%%secs)) - 
+            (24 * 3600)
+        ts3 = .xts(ts2, a)
+    }
 
+    index(ts3) = as.timeDate(index(ts3));
+	if(!dropna){
+	if(on !="weeks"|on!="days"){
+	if(on=="secs"|on=="seconds"){tby = "s"}
+	if(on=="mins"|on=="minutes"){tby = "min"}
+      if (on == "hours"){tby = "h"}
+	by = paste(k,tby,sep=" ");
+	allindex = as.timeDate(seq(start(ts3),end(ts3),by=by));
+	xx = xts(rep(1,length(allindex)),order.by=allindex);
+	ts3 = merge(ts3,xx)[,1];
+	}#currently for weeks and days, na are still dropped
+	}#end dropna if
 
-  #With weights:
-  if(!is.null(weights)){
-  tsb = cbind(ts,weights);
-  ep = endpoints(tsb, on, k);
-  ts2 = period.apply(tsb,ep,FUN=weightedaverage);  
-  }
-
-
-  if(on=="minutes"|on=="mins"|on=="secs"|on=="seconds"){
-  if(on=="minutes"|on=="mins"){secs = k*60;}
-  if(on=="secs"|on=="seconds"){secs = k}
-  a = .index(ts2) + (secs-.index(ts2) %% secs);
-  ts3 = .xts(ts2,a)
-  }
-
-  if(on=="hours"){
-  secs = 3600;
-  a = .index(ts2) + (secs-.index(ts2) %% secs)
-  ts3 = .xts(ts2,a);
-  }
-
-
-  if(on=="days"){
-  secs = 24*3600;
-  a = .index(ts2) + (secs-.index(ts2) %% secs) - (24*3600)
-  ts3 = .xts(ts2,a);
-  }
-
-  
-  if(on=="weeks")	{
-  secs = 24*3600*7;
-  a = (.index(ts2) + (secs-(.index(ts2) + (3L * 86400L)) %% secs))-(24*3600);
-  ts3 = .xts(ts2,a);
-				}
-
-  #return to timeDate timestamps
-  index(ts3) = as.timeDate(index(ts3));
-
-  return(ts3);
+    return(ts3)
 }
 
 #PRICE (specificity: opening price and previoustick)

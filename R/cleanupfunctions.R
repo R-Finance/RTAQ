@@ -251,8 +251,8 @@ rmlargespread = function(qdata,maxi=50){
   return(qdata[condition])
 }
 
-
-rmoutliers = function(qdata,maxi=10,window=50,type="advanced"){
+rmoutliers = function (qdata, maxi = 10, window = 50, type = "advanced")
+{
 ##function to remove entries for which the mid-quote deviated by more than 10 median absolute deviations 
 ##from a rolling centered median (excluding the observation under consideration) of 50 observations if type = "standard".
 
@@ -265,44 +265,70 @@ rmoutliers = function(qdata,maxi=10,window=50,type="advanced"){
 ##3. Rolling median of the previous "window" observations
 
 ##NOTE: Median Absolute deviation chosen contrary to Barndorff-Nielsen et al.
-  print("NOTE: This function is only useful for quotes NOT for trades");
-  condition = c();
-  halfwindow = round(window/2);
-  midquote = (as.numeric(qdata$BID)+as.numeric(qdata$OFFER))/2;
-  if(type=="standard"){
-  for(i in (halfwindow+1):(dim(qdata)[1]-halfwindow)){
-    mid = midquote[i];
-    vec = c(midquote[(i-halfwindow):(i-1)],midquote[(i+1):(i+halfwindow)]);
-    mad = mad(vec);
-    maxcriterion = median(vec)+maxi*mad;    
-    mincriterion = median(vec)-maxi*mad;  
-    condition[i-halfwindow] = mincriterion < mid & mid< maxcriterion;
-  }
-  }
+    print("NOTE: This function is only useful for quotes NOT for trades")
+    window = floor(window/2) * 2
+    condition = c();
+    halfwindow = window/2;
+    midquote = as.vector(as.numeric(qdata$BID) + as.numeric(qdata$OFFER))/2;
+    mad_all = mad(midquote);
 
-if(type=="advanced"){
-  for(i in (window+1):(dim(qdata)[1]-window)){
-    mid = midquote[i];
+    midquote = xts(midquote,order.by = index(qdata))
 
-    vec = c(midquote[(i-halfwindow):(i-1)],midquote[(i+1):(i+halfwindow)]);
-    vec2 = midquote[(i-window):(i-1)];
-    vec3 = midquote[(i+1):(i+window)];
+    if (mad_all == 0) {
+        m = as.vector(as.numeric(midquote))
+        s = c(TRUE, (m[2:length(m)] - m[1:(length(m) - 1)] != 
+            0))
+        mad_all = mad(as.numeric(midquote[s]))
+    }
 
-    medianv = c(median(vec),median(vec2),median(vec3));
-    difference = abs(medianv-mid);
-    mediani = medianv[min(difference) == difference];   
-    mad = mad(vec);
-    
-    maxcriterion = mediani+maxi*mad;    
-    mincriterion = mediani-maxi*mad;  
-          
-    condition[i-halfwindow] = mincriterion < mid & mid< maxcriterion;
-  }
+    medianw = function(midquote, n = window) {
+        m = floor(n/2) + 1
+        q = median(c(midquote[1:(m - 1)], midquote[(m + 1):(n + 
+            1)]))
+        return(q)
+    }
 
-}
+    if (type == "standard") {
+        meds = as.numeric(rollapply(midquote, width = (window + 
+            1), FUN = medianw, align = "center"))
+    }
+    if (type == "advanced") {
+        advancedperrow = function(qq) {
+            diff = abs(qq[1:3] - qq[4])
+            select = min(diff) == diff
+            value = qq[select]
+            if (length(value) > 1) {
+                value = median(value)
+            }
+            return(value)
+        }
+        n = length(midquote)
+        allmatrix = matrix(rep(0, 4 * n), ncol = 4)
+        median2 = function(a) {
+            median(a)
+        }
+        standardmed = as.numeric(rollapply(midquote, width = (window), 
+            FUN = median2, align = "center"))
+        allmatrix[(halfwindow + 1):(n - halfwindow), 1] = as.numeric(rollapply(midquote, 
+            width = (window + 1), FUN = medianw, align = "center"))
+        allmatrix[(1:(n - window)), 2] = standardmed[2:length(standardmed)]
+        allmatrix[(window + 1):(n), 3] = standardmed[1:(length(standardmed) - 
+            1)]
+        allmatrix[, 4] = midquote
+        meds = apply(allmatrix, 1, advancedperrow)[(halfwindow + 
+            1):(n - halfwindow)]
+    }
 
-  condition = c(rep(TRUE,halfwindow),condition,rep(TRUE,halfwindow));
-  qdata[condition];
+    midquote = as.numeric(midquote);
+    maxcriterion = meds + maxi * mad_all
+    mincriterion = meds - maxi * mad_all
+
+    condition = mincriterion < midquote[(halfwindow + 1):(length(midquote) - 
+        halfwindow)] & midquote[(halfwindow + 1):(length(midquote) - 
+        halfwindow)] < maxcriterion
+    condition = c(rep(TRUE, halfwindow), condition, rep(TRUE, 
+        halfwindow))
+    qdata[condition];
 }
 
 

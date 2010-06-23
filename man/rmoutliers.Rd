@@ -2,7 +2,7 @@
 \Rdversion{1.1}
 \alias{rmoutliers}
 \title{
-Delete entries for which the mid-quote is outlying with to respect surrounding entries
+Delete entries for which the mid-quote is outlying with respect to surrounding entries
 }
 \description{
 If type="standard":  Function deletes entries for which the mid-quote deviated by more than "maxi"
@@ -10,7 +10,7 @@ median absolute deviations from a rolling centered median (excluding
 the observation under consideration) of "window" observations.
 
 If type="advanced":  Function deletes entries for which the mid-quote deviates by more than "maxi"
-median absolute deviations from the value closest to the midquote of
+median absolute deviations from the value closest to the mid-quote of
 these three options:
 \enumerate{
 \item Rolling centered median (excluding the observation under consideration)
@@ -21,7 +21,11 @@ these three options:
 The advantage of this procedure compared to the "standard" proposed
 by Barndorff-Nielsen et al. (2010) is that it will not incorrectly remove
 large price jumps. Therefore this procedure has been set as the default
-for removing outliers.
+for removing outliers. 
+
+Note that the median absolute deviation is taken over the entire
+sample. In case it is zero (which can happen if mid-quotes don't change much), 
+the median absolute deviation is taken over a subsample without constant mid-quotes.
 }
 
 \usage{
@@ -34,7 +38,8 @@ rmoutliers(qdata,maxi=10,window=50,type="advanced")}
   \item{type}{should be "standard" or "advanced" (see description).}
 }
 
-\section{Details}{NOTE: This function works only correct if supplied input data consists of 1 day.}
+\section{Details}{
+NOTE: This function works only correct if supplied input data consists of 1 day.}
 
 \value{xts object}
 
