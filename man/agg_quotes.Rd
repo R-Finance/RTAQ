@@ -6,7 +6,7 @@ Aggregate an xts object containing quote data}
 
 
 \description{
-Function returns an xts object containing the aggregated quote data with columns "SYMBOL", "EX", "BID","BIDSIZE","OFFER","OFFERSIZE". 
+Function returns an xts object containing the aggregated quote data with columns "SYMBOL", "EX", "BID","BIDSIZ","OFR","OFRSIZ". 
 Please see pdf documentation for the requirements regarding "quote data objects".
 }
 

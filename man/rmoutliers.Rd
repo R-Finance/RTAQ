@@ -32,7 +32,7 @@ the median absolute deviation is taken over a subsample without constant mid-quo
 rmoutliers(qdata,maxi=10,window=50,type="advanced")}
 
 \arguments{
-  \item{qdata}{an xts object at least containing the columns "BID" and "OFFER".} 
+  \item{qdata}{an xts object at least containing the columns "BID" and "OFR".} 
   \item{maxi}{an integer, indicating the maximum number of median absolute deviations allowed.} 
   \item{window}{an integer, indicating the time window for which the "outlyingness" is considered.}
   \item{type}{should be "standard" or "advanced" (see description).}

@@ -9,7 +9,7 @@ Logarithm of the quoted spread
 Function returns an xts object with the logarithm of the quoted spread, defined as
 
 \deqn{
-\mbox{log quoted spread}_t =  \log(\frac{\mbox{OFFERSIZE}_{t}}{\mbox{BID}_{t}})
+\mbox{log quoted spread}_t =  \log(\frac{\mbox{OFR}_{t}}{\mbox{BID}_{t}})
 }
 
 (Hasbrouck and Seppi, 2001).

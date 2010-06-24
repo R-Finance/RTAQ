@@ -9,7 +9,7 @@ Effective spread
 Function returns an xts object with the effective spread, defined as
 
 \deqn{
-\mbox{Effective Spread}_t =  2*D_t*(\mbox{PRICE}_{t} - \frac{(\mbox{BID}_{t}+\mbox{OFFER}_{t})}{2}),
+\mbox{Effective Spread}_t =  2*D_t*(\mbox{PRICE}_{t} - \frac{(\mbox{BID}_{t}+\mbox{OFR}_{t})}{2}),
 }
 
 where \eqn{D_t} is 1 (-1) if \eqn{trade_t} was buy (sell) (see Bhoehmer (2005), Bessembinder (2003)). 

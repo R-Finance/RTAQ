@@ -9,7 +9,7 @@ Proportional effective spread
 Function returns an xts object with the proportional effective spread, defined as
 
 \deqn{
-\mbox{proportional effective spread}_t =  \frac{\mbox{effective spread}_t}{(\mbox{OFFER}_{t}+\mbox{BID}_{t})/2}
+\mbox{proportional effective spread}_t =  \frac{\mbox{effective spread}_t}{(\mbox{OFR}_{t}+\mbox{BID}_{t})/2}
 }
 (Venkataraman, 2001).
 

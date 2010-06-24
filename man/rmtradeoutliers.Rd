@@ -16,7 +16,7 @@ rmtradeoutliers(tdata,qdata)
   \item{tdata}{ an xts object containing the time series data, with 
 at least the column "PRICE", containing the transaction price.}
   \item{qdata}{ an xts object containing the time series data,
-with at least the columns "BID" and "OFFER", containing the bid and 
+with at least the columns "BID" and "OFR", containing the bid and 
 ask prices.
 }
 }

@@ -9,7 +9,7 @@ Log quoted size
 Function returns an xts object with the log quoted size, defined as
 
 \deqn{
-\mbox{log quoted size}_t =  \log(\mbox{OFFERSIZE}_{t})-\log(\mbox{BIDSIZE}_{t})
+\mbox{log quoted size}_t =  \log(\mbox{OFRSIZ}_{t})-\log(\mbox{BIDSIZ}_{t})
 }
 
 (Hasbrouck and Seppi, 2001).

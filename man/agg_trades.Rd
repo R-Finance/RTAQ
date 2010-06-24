@@ -28,7 +28,7 @@ Please Note:
 
 In case an interval is empty, it is omitted. (Possibly, you expect an NA but this isn't the case)
 
-Columns "COND", "CR", "G127" are dropped because aggregating them makes no sense.
+Columns "COND", "CORR", "G127" are dropped because aggregating them makes no sense.
 
 It is assumed that a trading day starts at 09:30:00 and ends at 16:00:00. Returned object will always contain the 
 first observation (opening price,..).

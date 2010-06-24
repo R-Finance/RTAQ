@@ -12,7 +12,7 @@ Function returns an xts object with the midquote absolute returns, defined as
 \mbox{midquote absolute return}_t =  |\log(\mbox{midquote}_{t})-\log(\mbox{midquote}_{t-1})|,
 }
 
-where \eqn{\mbox{midquote}_{t} = \frac{\mbox{BID}_{t} + \mbox{OFFERSIZE}_{t}}{2}}.
+where \eqn{\mbox{midquote}_{t} = \frac{\mbox{BID}_{t} + \mbox{OFR}_{t}}{2}}.
 }
 
 \usage{

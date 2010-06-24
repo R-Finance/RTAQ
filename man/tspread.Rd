@@ -9,7 +9,7 @@ Half traded spread
 Function returns an xts object with the half traded spread, defined as
 
 \deqn{
-\mbox{half traded spread}_t =  D_t*(\mbox{PRICE}_{t} - \frac{(\mbox{BID}_{t}+\mbox{OFFER}_{t})}{2}),
+\mbox{half traded spread}_t =  D_t*(\mbox{PRICE}_{t} - \frac{(\mbox{BID}_{t}+\mbox{OFR}_{t})}{2}),
 }
 where \eqn{D_t} is 1 (-1) if \eqn{trade_t} was buy (sell) (see Bhoehmer (2005), Bessembinder (2003)). 
 Note that the input of this function consists of the matched trades and quotes,

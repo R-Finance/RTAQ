@@ -9,7 +9,7 @@ Proportional half traded spread
 Function returns an xts object with the proportional half traded spread, defined as
 
 \deqn{
-\mbox{proportional half traded spread}_t =  \frac{\mbox{half traded spread}_t}{\frac{\mbox{OFFER}_{t}+\mbox{BID}_{t}}{2}}.
+\mbox{proportional half traded spread}_t =  \frac{\mbox{half traded spread}_t}{\frac{\mbox{OFR}_{t}+\mbox{BID}_{t}}{2}}.
 }
 Note that the input of this function consists of the matched trades and quotes,
  so this is were the time indication refers to (and thus not to the registered quote timestamp).

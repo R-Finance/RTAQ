@@ -9,7 +9,7 @@ Quoted spread
 Function returns an xts object with the quoted spread, defined as
 
 \deqn{
-\mbox{quoted spread}_t =  \mbox{OFFER}_{t}-\mbox{BID}_{t}
+\mbox{quoted spread}_t =  \mbox{OFR}_{t}-\mbox{BID}_{t}
 }
 Note that the input of this function consists of the matched trades and
 quotes, so this is where the time indication refers to (and thus not to the

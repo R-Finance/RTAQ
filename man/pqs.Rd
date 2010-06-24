@@ -9,7 +9,7 @@ Proportional quoted spread
 Function returns an xts object with the quoted spread, defined as
 
 \deqn{
-\mbox{proportional quoted spread}_t =  \frac{\mbox{quoted spread}_t}{\frac{\mbox{OFFER}_{t}+\mbox{BID}_{t}}{2}}
+\mbox{proportional quoted spread}_t =  \frac{\mbox{quoted spread}_t}{\frac{\mbox{OFR}_{t}+\mbox{BID}_{t}}{2}}
 }
 (Venkataraman, 2001).
 Note that the input of this function consists of the matched trades and

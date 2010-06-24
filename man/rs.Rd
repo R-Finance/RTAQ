@@ -9,11 +9,11 @@ Realized spread
 Function returns an xts object with the realized spread, defined as
 
 \deqn{
-\mbox{Realized Spread}_t =  2*D_t*(\mbox{PRICE}_{t} - \frac{(\mbox{BID}_{t+300}+\mbox{OFFER}_{t+300})}{2}),
+\mbox{Realized Spread}_t =  2*D_t*(\mbox{PRICE}_{t} - \frac{(\mbox{BID}_{t+300}+\mbox{OFR}_{t+300})}{2}),
 }
 
 where \eqn{D_t} is 1 (-1) if \eqn{trade_t} was buy (sell) (see Bhoehmer (2005), Bessembinder (2003)). 
-Note that the time indication of \eqn{\mbox{BID}} and \eqn{\mbox{OFFER}} refers 
+Note that the time indication of \eqn{\mbox{BID}} and \eqn{\mbox{OFR}} refers 
 to the registered time of the quote in seconds.
 }
 

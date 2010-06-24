@@ -1,5 +1,5 @@
 previoustick = function(a){
-a=as.vector(a);
+a = as.vector(a);
 b = a[length(a)];
 return(b)
 }

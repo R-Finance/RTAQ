@@ -9,7 +9,7 @@ Depth imbalance (as a difference)
 Function returns an xts object with the depth imbalance (as a difference), defined as
 
 \deqn{
-\mbox{depth imbalace (as difference)}_t =  \frac{D_t *(\mbox{OFFERSIZE}_{t}-\mbox{BIDSIZE}_{t})}{(\mbox{OFFERSIZE}_{t}+\mbox{BIDSIZE}_{t})},
+\mbox{depth imbalace (as difference)}_t =  \frac{D_t *(\mbox{OFRSIZ}_{t}-\mbox{BIDSIZ}_{t})}{(\mbox{OFRSIZ}_{t}+\mbox{BIDSIZ}_{t})},
 }
 where \eqn{D_t} is 1 (-1) if \eqn{trade_t} was buy (sell) (see Bhoehmer (2005), Bessembinder (2003)). 
 Note that the input of this function consists of the matched trades and quotes,

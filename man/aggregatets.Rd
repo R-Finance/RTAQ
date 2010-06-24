@@ -10,7 +10,7 @@ It can handle irregularly spaced timeseries and returns a regularly spaced one.
 }
 
 \usage{
-aggregatets(ts, FUN=previoustick, on="minutes", k=1, weights=NULL)
+aggregatets(ts, FUN=previoustick, on="minutes", k=1, weights=NULL,dropna=F)
 }
 
 \arguments{

@@ -13,7 +13,7 @@ nozeroquotes(qdata);
 }
 
 \arguments{
-  \item{qdata}{an xts object at least containing the columns "BID" and "OFFER".} 
+  \item{qdata}{an xts object at least containing the columns "BID" and "OFR".} 
 }
 
 \section{Details}{}

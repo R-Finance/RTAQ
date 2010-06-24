@@ -9,7 +9,7 @@ Proportional realized spread
 Function returns an xts object with the proportional realized spread, defined as
 
 \deqn{
-\mbox{proportional realized spread}_t =  \frac{\mbox{realized spread}_t}{(\mbox{OFFER}_{t}+\mbox{BID}_{t})/2}
+\mbox{proportional realized spread}_t =  \frac{\mbox{realized spread}_t}{(\mbox{OFR}_{t}+\mbox{BID}_{t})/2}
 }
 (Venkataraman, 2001).
 
