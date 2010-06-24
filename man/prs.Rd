@@ -18,13 +18,15 @@ Note that the input of this function consists of the matched trades and quotes,
 }
 
 \usage{
-prs(data);
+prs(data,tdata,qdata);
 }
 
 \arguments{
   \item{data}{ 
 xts object, containing joined trades and quotes (e.g. using \code{\link{matchtq}})
 }
+  \item{tdata}{xts object, containing the trade data. See pdf documentation for more details.}
+  \item{qdata}{xts object, containing the quote data. See pdf documentation for more details.}
 }
 
 \section{Details}{

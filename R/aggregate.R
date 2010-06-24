@@ -11,7 +11,6 @@ c = weighted.mean(aa,bb);
 return(c)
 }
 
-
 ##AGGREGATION;
 aggregatets = function (ts, FUN = previoustick, on = "minutes", k = 1, weights = NULL,dropna=F)
 {
@@ -55,7 +54,6 @@ aggregatets = function (ts, FUN = previoustick, on = "minutes", k = 1, weights =
         ts3 = .xts(ts2, a)
     }
 
-    index(ts3) = as.timeDate(index(ts3));
 	if(!dropna){
 	if(on !="weeks"|on!="days"){
 	if(on=="secs"|on=="seconds"){tby = "s"}
@@ -63,10 +61,12 @@ aggregatets = function (ts, FUN = previoustick, on = "minutes", k = 1, weights =
       if (on == "hours"){tby = "h"}
 	by = paste(k,tby,sep=" ");
 	allindex = as.timeDate(seq(start(ts3),end(ts3),by=by));
-	xx = xts(rep(1,length(allindex)),order.by=allindex);
+	xx = xts(rep("1",length(allindex)),order.by=allindex);
 	ts3 = merge(ts3,xx)[,1];
+
 	}#currently for weeks and days, na are still dropped
 	}#end dropna if
+    index(ts3) = as.timeDate(index(ts3));
 
     return(ts3)
 }
@@ -74,6 +74,7 @@ aggregatets = function (ts, FUN = previoustick, on = "minutes", k = 1, weights =
 #PRICE (specificity: opening price and previoustick)
 
 agg_price = function(ts,FUN = previoustick,on="minutes",k=1){
+ts = dataformatc(ts);
 ##Return new timeseries as xts object where
 ##first observation is always the opening price
 ##subsequent observations are the closing prices over the interval with endpoint the timestamp of the result
@@ -101,7 +102,7 @@ agg_price = function(ts,FUN = previoustick,on="minutes",k=1){
 
 #VOLUME: (specificity: always sum)
 agg_volume = function(ts,FUN = sumN,on="minutes",k=5, includeopen=FALSE){
-
+ts = dataformatc(ts);
   if(!includeopen){ts3 = aggregatets(ts, FUN=sumN, on, k)}
 
   if(includeopen){
@@ -118,9 +119,10 @@ return(ts3)
 
 ###TRADES AGGREGATION:
 agg_trades = function(tdata,on="minutes",k=5){
+tdata = dataformatc(tdata);
   ## Aggregates an entire trades xts object (tdata) over a "k"-minute interval.
   ## Returned xts-object contains: SYMBOL,EX,PRICE,SIZE.
-  ## Variables COND, CR, G127 are dropped because aggregating them makes no sense.
+  ## Variables COND, CORR, G127 are dropped because aggregating them makes no sense.
   ## NOTE: first observation (opening price) always included.
 
   PRICE = agg_price(tdata$PRICE,on=on,k=k);
@@ -137,24 +139,25 @@ agg_trades = function(tdata,on="minutes",k=5){
 
 ###QUOTES AGGREGATION:
 agg_quotes = function(qdata,on="minutes",k=5){
+qdata = dataformatc(qdata);
   ## Aggregates an entire quotes xts object (qdata) object over a "k"-minute interval.
-  ## Returned xts-object contains: SYMBOL,EX,BID,BIDSIZE,OFFER,OFFERSIZE.
+  ## Returned xts-object contains: SYMBOL,EX,BID,BIDSIZ,OFR,OFRSIZ.
   ## Variable MODE is dropped because aggregation makes no sense.
   ## "includeopen" determines whether to include the exact opening quotes.
   
   BID = agg_price(qdata$BID,on=on,k=k);
-  OFFER = agg_price(qdata$OFFER,on=on,k=k);
+  OFR = agg_price(qdata$OFR,on=on,k=k);
 
-  BIDSIZE = agg_volume(qdata$BIDSIZE,on=on,k=k,includeopen=TRUE);
-  OFFERSIZE = agg_volume(qdata$OFFERSIZE,on=on,k=k,includeopen=TRUE);
+  BIDSIZ = agg_volume(qdata$BIDSIZ,on=on,k=k,includeopen=TRUE);
+  OFRSIZ = agg_volume(qdata$OFRSIZ,on=on,k=k,includeopen=TRUE);
 
   EX = agg_price(qdata$EX,on=on,k=k)
-  SYMBOL = rep(qdata$SYMBOL[1],length(BIDSIZE));
+  SYMBOL = rep(qdata$SYMBOL[1],length(BIDSIZ));
 
-  all = data.frame(SYMBOL,EX,BID,BIDSIZE,OFFER,OFFERSIZE);
-  colnames(all) =c("SYMBOL","EX","BID","BIDSIZE","OFFER","OFFERSIZE");
+  all = data.frame(SYMBOL,EX,BID,BIDSIZ,OFR,OFRSIZ);
+  colnames(all) =c("SYMBOL","EX","BID","BIDSIZ","OFR","OFRSIZ");
 
-  ts = xts(all,index(BIDSIZE));
+  ts = xts(all,index(BIDSIZ));
 
   return(ts);
 }

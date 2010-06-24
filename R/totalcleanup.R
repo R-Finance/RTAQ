@@ -1,3 +1,11 @@
+dataformatc = function(a){
+if(any(colnames(a)=="CR")){colnames(a)[colnames(a)=="CR"]="CORR"}
+if(any(colnames(a)=="OFFER")){colnames(a)[colnames(a)=="OFFER"]="OFR"}
+if(any(colnames(a)=="BIDSIZE")){colnames(a)[colnames(a)=="BIDSIZE"]="BIDSIZ"}
+if(any(colnames(a)=="OFFERSIZE")){colnames(a)[colnames(a)=="OFFERSIZE"]="OFRSIZ"}
+return(a)
+}
+
 #TRADES CLEANUP WRAPPER
 tradescleanup = function(from="2008-01-03",to="2008-01-03",datasource,datadestination,ticker,exchange){
   dates = timeSequence(from,to, format = "%Y-%m-%d", FinCenter = "GMT");
@@ -15,6 +23,8 @@ tradescleanup = function(from="2008-01-03",to="2008-01-03",datasource,datadestin
 
   if(class(tdata)!="try-error"){
   exchange = exchanges[exchanges==ticker[i]];  
+
+  tdata = dataformatc(tdata);
 
   ##actual clean-up: 
   ##general:
@@ -60,9 +70,11 @@ tradescleanup_finalop = function(from="2008-01-03",to="2008-01-03",datasource,da
   load(paste(datasourcex,"\\",dataname,sep=""));
   load(paste(datasourcex,"\\",dataname2,sep=""));
 
+  tdata = dataformatc(tdata);
+  qdata = dataformatc(qdata);
+
   #1 cleaning procedure that needs cleaned trades and quotes
   tdata = try(rmtradeoutliers(tdata,qdata));
-
 
   #save
   save(tdata, file = paste(datadestinationx,"\\",dataname,sep=""));
@@ -98,6 +110,7 @@ quotescleanup = function(from,to,datasource,datadestination,ticker,exchange){
   exchange = exchanges[exchanges==ticker[i]];  
   if(exchange=="Q"){exchange="T"}
 
+  qdata = dataformatc(qdata);
   ##actual clean-up:
   ##general:
   qdata = try(nozeroquotes(qdata));

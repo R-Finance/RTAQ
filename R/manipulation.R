@@ -89,6 +89,8 @@ uniTAQload = function(ticker,from,to,trades=TRUE,quotes=FALSE,datasource=NULL,va
 
 
 matchtq = function(tdata,qdata,adjustment=2){ ##FAST VERSION
+tdata = dataformatc(tdata);
+qdata = dataformatc(qdata);
   tt = dim(tdata)[2];  
   index(qdata) = index(qdata) + adjustment;
 
@@ -114,6 +116,9 @@ matchtq = function(tdata,qdata,adjustment=2){ ##FAST VERSION
 }
 
 matchtq_old = function(tdata,qdata,adjustment=2){ ##FAST VERSION
+qdata = dataformatc(qdata);
+tdata = dataformatc(tdata);
+
   tt = dim(tdata)[2];  
   index(qdata) = index(qdata) + adjustment;
   
@@ -140,10 +145,11 @@ matchtq_old = function(tdata,qdata,adjustment=2){ ##FAST VERSION
 
 
 gettradedir = function(data){
+data = dataformatc(data);
 ##Function returns a vector with the inferred trade direction:
 ##NOTE: the value of the first (and second) observation should be ignored if price=midpoint for the first (second) observation.
   bid = as.numeric(data$BID);
-  offer = as.numeric(data$OFFER);
+  offer = as.numeric(data$OFR);
   midpoints = (bid + offer)/2;
   price = as.numeric(data$PRICE);
  
@@ -163,9 +169,10 @@ gettradedir = function(data){
 
 
 es = function(data){
+data = dataformatc(data);
 #returns the effective spread as xts object
   bid = as.numeric(data$BID);
-  offer = as.numeric(data$OFFER);
+  offer = as.numeric(data$OFR);
   midpoints = (bid + offer)/2;
   price = as.numeric(data$PRICE);
   d = gettradedir(data);
@@ -176,6 +183,10 @@ es = function(data){
 
 
 rs = function(data,tdata,qdata){
+data = dataformatc(data);
+qdata = dataformatc(qdata);
+tdata = dataformatc(tdata);
+
 ###Function returns the realized spread as an xts object
 #Please note that the returned object can contain less observations that the original "data"
 #because of the need to find quotes that match the trades 5 min ahead
@@ -200,7 +211,7 @@ rs = function(data,tdata,qdata){
 
 
   bid = as.numeric(data2$BID);
-  offer = as.numeric(data2$OFFER);
+  offer = as.numeric(data2$OFR);
   midpoints = (bid + offer)/2;
   price = as.numeric(data$PRICE);
   d = gettradedir(data);
@@ -211,6 +222,7 @@ rs = function(data,tdata,qdata){
 }
 
 value_trade = function(data){
+data = dataformatc(data);
 #returns the trade value as xts object
   price = as.numeric(data$PRICE);
   size = as.numeric(data$SIZE);
@@ -220,6 +232,7 @@ value_trade = function(data){
 }
 
 signed_value_trade = function(data){
+data = dataformatc(data);
 #returns the signed trade value as xts object
   price = as.numeric(data$PRICE);
   size = as.numeric(data$SIZE);
@@ -231,6 +244,7 @@ signed_value_trade = function(data){
 
 
 signed_trade_size = function(data){
+data = dataformatc(data);
 #returns the signed size of the trade as xts object
   size = as.numeric(data$SIZE);
   d = gettradedir(data);
@@ -240,9 +254,10 @@ signed_trade_size = function(data){
 }
 
 di_diff = function(data){
+data = dataformatc(data);
 #returns the depth imbalance (as a difference) as xts object
-  bidsize = as.numeric(data$BIDSIZE);
-  offersize = as.numeric(data$OFFERSIZE);
+  bidsize = as.numeric(data$BIDSIZ);
+  offersize = as.numeric(data$OFRSIZ);
 
   d = gettradedir(data);
   di = (d*(offersize-bidsize))/(offersize+bidsize);
@@ -251,9 +266,10 @@ di_diff = function(data){
 }
 
 di_div = function(data){
+data = dataformatc(data);
 #returns the depth imbalance (as a ratio) as xts object
-  bidsize = as.numeric(data$BIDSIZE);
-  offersize = as.numeric(data$OFFERSIZE);
+  bidsize = as.numeric(data$BIDSIZ);
+  offersize = as.numeric(data$OFRSIZ);
   d = gettradedir(data);
 
   di = (offersize/bidsize)^d;
@@ -262,10 +278,11 @@ di_div = function(data){
 }
 
 pes = function(data){
+data = dataformatc(data);
 #returns the Proportional Effective Spread as xts object
   es = es(data);
   bid = as.numeric(data$BID);
-  offer = as.numeric(data$OFFER);
+  offer = as.numeric(data$OFR);
   midpoints = (bid + offer)/2;
 
   pes = 100*es/midpoints
@@ -273,19 +290,20 @@ pes = function(data){
   return(pes_xts);
 }
 
-prs = function(data){
+prs = function(data,tdata,qdata){
+data = dataformatc(data);
 #returns the Proportional Realized Spread as xts object
-  rs = rs(data);
+  rs = rs(data,tdata,qdata);
   bid = as.numeric(data$BID);
-  offer = as.numeric(data$OFFER);
+  offer = as.numeric(data$OFR);
   midpoints = (bid + offer)/2;
-
   prs = 100*rs/midpoints
   prs_xts = xts(prs,order.by=index(data));
   return(prs_xts);
 }
 
 price_impact = function(data){
+data = dataformatc(data);
 #returns the Price impact as xts object
   rs = rs(data);
   es = es(data);
@@ -296,11 +314,12 @@ price_impact = function(data){
 }
 
 prop_price_impact = function(data){
+data = dataformatc(data);
 #returns the Proportional Price impact as xts object
   rs = rs(data);
   es = es(data);
   bid = as.numeric(data$BID);
-  offer = as.numeric(data$OFFER);
+  offer = as.numeric(data$OFR);
   midpoints = (bid + offer)/2;
 
   prop_pi = (100*(es-rs)/2)/midpoints;
@@ -309,9 +328,10 @@ prop_price_impact = function(data){
 }
 
 tspread = function(data){
+data = dataformatc(data);
 #returns the half traded spread as xts object
   bid = as.numeric(data$BID);
-  offer = as.numeric(data$OFFER);
+  offer = as.numeric(data$OFR);
   midpoints = (bid + offer)/2;
   price = as.numeric(data$PRICE);
   d = gettradedir(data);
@@ -321,9 +341,10 @@ tspread = function(data){
 }
 
 pts = function(data){
+data = dataformatc(data);
 #returns the proportional half traded spread as xts object
   bid = as.numeric(data$BID);
-  offer = as.numeric(data$OFFER);
+  offer = as.numeric(data$OFR);
   midpoints = (bid + offer)/2;
   price = as.numeric(data$PRICE);
   d = gettradedir(data);
@@ -334,6 +355,7 @@ pts = function(data){
 }
 
 p_return_sqr = function(data){
+data = dataformatc(data);
 #returns the squared log return on Trade prices as xts object
   price = as.numeric(data$PRICE);
   return = c(0,log(price[2:length(price)])-log(price[1:length(price)-1]));
@@ -343,20 +365,11 @@ p_return_sqr = function(data){
   return(sqr_return_xts);
 }
 
-p_return_abs = function(data){
-#returns the absolute log return on Trade prices as xts object
-  price = as.numeric(data$PRICE);
-  return = c(0,log(price[2:length(price)])-log(price[1:length(price)-1]));
-  abs_return = abs(return);
-
-  abs_return_xts = xts(abs_return,order.by=index(data));
-  return(sqr_return_xts);
-}
-
 qs = function(data){
+data = dataformatc(data);
 #returns the quoted spread as xts object
   bid = as.numeric(data$BID);
-  offer = as.numeric(data$OFFER);
+  offer = as.numeric(data$OFR);
   qs = offer-bid;
 
   qs_xts = xts(qs,order.by=index(data));
@@ -364,9 +377,10 @@ qs = function(data){
 }
 
 pqs = function(data){
+data = dataformatc(data);
 #returns the proportional quoted spread as xts object
   bid = as.numeric(data$BID);
-  offer = as.numeric(data$OFFER);
+  offer = as.numeric(data$OFR);
   midpoints = (bid + offer)/2;
   qs = offer-bid;
   pqs = 100*qs/midpoints;
@@ -376,9 +390,10 @@ pqs = function(data){
 }
 
 logqs = function(data){
+data = dataformatc(data);
 #returns the logarithm of the quoted spread as xts object
   bid = as.numeric(data$BID);
-  offer = as.numeric(data$OFFER);
+  offer = as.numeric(data$OFR);
   logqs = log(offer/bid);
 
   logqs_xts = xts(logqs,order.by=index(data));
@@ -386,9 +401,10 @@ logqs = function(data){
 }
 
 logsize = function(data){
+data = dataformatc(data);
 #returns the log quoted size as xts object
-  bidsize = as.numeric(data$BIDSIZE);
-  offersize = as.numeric(data$OFFERSIZE);
+  bidsize = as.numeric(data$BIDSIZ);
+  offersize = as.numeric(data$OFRSIZ);
   logsize = log(bidsize)+log(offersize);
 
   logsize_xts = xts(logsize,order.by=index(data));
@@ -396,6 +412,7 @@ logsize = function(data){
 }
 
 qslope = function(data){
+data = dataformatc(data);
 #returns the quoted slope as xts object
   logsize = logsize(data);
   qs = qs(data);
@@ -407,6 +424,7 @@ qslope = function(data){
 }
 
 logqslope = function(data){
+data = dataformatc(data);
 #returns the log quoted slope as xts object
   logqs = logqs(data);
   logsize = logsize(data);
@@ -420,6 +438,7 @@ logqslope = function(data){
 
 
 mq_return_sqr = function(data){
+data = dataformatc(data);
 #returns midquote squared returns slope as xts object
   mq_return = mq_return(data);
   
@@ -430,6 +449,7 @@ mq_return_sqr = function(data){
 }
 
 mq_return_abs = function(data){
+data = dataformatc(data);
 #returns absolute midquote returns slope as xts object
   mq_return = mq_return(data);
   
@@ -439,34 +459,42 @@ mq_return_abs = function(data){
   return(mq_return_abs_xts);
 }
 
-liquidity = function(data,tdata,qdata){
+liquidity <- function (data, tdata, qdata)
+{
+data = dataformatc(data);
+qdata = dataformatc(qdata);
+tdata = dataformatc(tdata);
 ##Function computes many liquidity measures and returns an xts object containing them
 
 ##First part solves the problem that unequal number of obs (in data and data2) is possible when computing the RS
-  data2 = matchtq(tdata,qdata,adjustment =300);
-  if(dim(data2)[1]>dim(data)[1]){
-  condition = as.vector(as.character(index(data2)))%in%as.vector(as.character(index(data)));
-  data2 = subset(data2,condition,select=1:(dim(data)[2]));
-  data = subset(data,as.vector(as.character(index(data)))%in%as.vector(as.character(index(data2))),select=1:(dim(data2)[2]));
-  }
-  if(dim(data2)[1]<dim(data)[1]){
-  condition = as.vector(as.character(index(data)))%in%as.vector(as.character(index(data2)));
-  data = subset(data,condition,select=1:(dim(data2)[2]));
-  data2 = subset(data2,as.vector(as.character(index(data2)))%in%as.vector(as.character(index(data))),select=1:(dim(data)[2]));
-  }
 
+    data2 = matchtq(tdata, qdata, adjustment = 300)
+    if (dim(data2)[1] > dim(data)[1]) {
+        condition = as.vector(as.character(index(data2))) %in%
+            as.vector(as.character(index(data)))
+        data2 = subset(data2, condition, select = 1:(dim(data)[2]))
+        data = subset(data, as.vector(as.character(index(data))) %in%
+            as.vector(as.character(index(data2))), select = 1:(dim(data2)[2]))
+    }
+    if (dim(data2)[1] < dim(data)[1]) {
+        condition = as.vector(as.character(index(data))) %in%
+            as.vector(as.character(index(data2)))
+        data = subset(data, condition, select = 1:(dim(data2)[2]))
+        data2 = subset(data2, as.vector(as.character(index(data2))) %in%
+            as.vector(as.character(index(data))), select = 1:(dim(data)[2]))
+    }
     bid = as.numeric(data$BID)
-    offer = as.numeric(data$OFFER)
+    offer = as.numeric(data$OFR)
     midpoints = (bid + offer)/2
     price = as.numeric(data$PRICE)
     size = as.numeric(data$SIZE)
     d = gettradedir(data)
-    bidsize = as.numeric(data$BIDSIZE)
-    offersize = as.numeric(data$OFFERSIZE)
-    return = c(0, log(price[2:length(price)]) - log(price[1:length(price) - 
+    bidsize = as.numeric(data$BIDSIZ)
+    offersize = as.numeric(data$OFRSIZ)
+    return = c(0, log(price[2:length(price)]) - log(price[1:length(price) -
         1]))
     mq_return = mq_return(data)
-    midpoints2 = (as.numeric(data2$BID) + as.numeric(data2$OFFER))/2
+    midpoints2 = (as.numeric(data2$BID) + as.numeric(data2$OFR))/2
     es = 2 * d * (price - midpoints)
     rs = 2 * d * (price - midpoints2)
     value_trade = price * size
@@ -490,27 +518,51 @@ liquidity = function(data,tdata,qdata){
     logqslope = logqs/logsize
     mq_return_sqr = mq_return^2
     mq_return_abs = abs(mq_return)
-    liquid = cbind(es, rs, value_trade, signed_value_trade, di_diff, 
-        di_div, pes, prs, price_impact, prop_price_impact, tspread, 
-        pts, p_return_sqr, p_return_abs, qs, pqs, logqs, logsize, 
+    liquid = cbind(es, rs, value_trade, signed_value_trade, di_diff,
+        di_div, pes, prs, price_impact, prop_price_impact, tspread,
+        pts, p_return_sqr, p_return_abs, qs, pqs, logqs, logsize,
         qslope, logqslope, mq_return_sqr, mq_return_abs)
-    names = c("es", "rs", "value_trade", "signed_value_trade", 
-        "di_diff", "di_div", "pes", "prs", "price_impact", "prop_price_impact", 
-        "tspread", "pts", "p_return_sqr", "p_return_abs", "qs", "pqs", 
-        "logqs", "logsize", "qslope", "logqslope", "mq_return_sqr", 
-        "mq_return_abs");
-    colnames(liquid) = names;
-    return(liquid);
+    names = c("es", "rs", "value_trade", "signed_value_trade",
+        "di_diff", "di_div", "pes", "prs", "price_impact", "prop_price_impact",
+        "tspread", "pts", "p_return_sqr", "p_return_abs", "qs", "pqs",
+        "logqs", "logsize", "qslope", "logqslope", "mq_return_sqr",
+        "mq_return_abs")
+    colnames(liquid) = names
+    return(liquid)
 }
 
 ##help_function:
 mq_return = function(data){
+data = dataformatc(data);
 #function returns the midquote logreturns as xts object
   bid = as.numeric(data$BID);
-  offer = as.numeric(data$OFFER);
+  offer = as.numeric(data$OFR);
   midpoints = (bid + offer)/2;
   mq_return = c(0,log(midpoints[2:length(midpoints)])-log(midpoints[1:length(midpoints)-1]));
 
   mq_return_xts = xts(mq_return,order.by=index(data));
   return(mq_return_xts);
 }
+
+
+###Zivot:
+p_return <- function (data)
+{
+    price = as.numeric(data$PRICE)
+    log.return = c(0, log(price[2:length(price)]) - log(price[1:length(price) -
+        1]))
+    return_xts = xts(log.return, order.by = index(data))
+    return(return_xts)
+}
+
+p_return_abs <- function (data)
+{
+    price = as.numeric(data$PRICE)
+    return = c(0, log(price[2:length(price)]) - log(price[1:length(price) -
+        1]))
+    abs_return = abs(return)
+    abs_return_xts = xts(abs_return, order.by = index(data))
+    return(abs_return_xts)
+}
+
+

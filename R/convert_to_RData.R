@@ -1,4 +1,4 @@
-##########HELPFUNCTION######
+##########HELPFUNCTION####
 readdata = function(path=NULL, extention="txt",header=F,dims=0){
 #extention should either be "txt" or "csv"
 if(!(extention=="txt"|extention=="csv")){print("Please select a supported extention")}
@@ -74,7 +74,7 @@ convert_trades = function(datasource,datadestination,ticker,extention="txt",head
   #assign column names
   if(header==FALSE){
   if(is.null(tradecolnames)){
-  tradecolnames=c("SYMBOL","DATE","EX","TIME","PRICE","SIZE","COND","CR","G127");
+  tradecolnames=c("SYMBOL","DATE","EX","TIME","PRICE","SIZE","COND","CORR","G127");
   colnames(tdata)= tradecolnames;
   }else{
   colnames(tdata)= tradecolnames;
@@ -83,10 +83,10 @@ convert_trades = function(datasource,datadestination,ticker,extention="txt",head
 
   ### solve issue when there is no COND ###
   cond=tdata$COND[is.na(tdata$G127)];
-  cr=tdata$CR[is.na(tdata$G127)];
+  cr=tdata$CORR[is.na(tdata$G127)];
 
   tdata$COND[is.na(tdata$G127)]=0;
-  tdata$CR[is.na(tdata$G127)]= as.character(cond);
+  tdata$CORR[is.na(tdata$G127)]= as.character(cond);
   tdata$G127[is.na(tdata$G127)] = as.character(cr);
   rm(cond,cr);
 
@@ -99,7 +99,7 @@ convert_trades = function(datasource,datadestination,ticker,extention="txt",head
   ##make xts object ##
   tdobject=timeDate(paste(as.vector(tdata$DATE), as.vector(tdata$TIME)),format = format,FinCenter = "GMT",zone="GMT");
   tdata = xts(tdata,order.by=tdobject);
-  tdata=tdata[,c("SYMBOL","EX","PRICE","SIZE","COND","CR","G127")];
+  tdata=tdata[,c("SYMBOL","EX","PRICE","SIZE","COND","CORR","G127")];
 
   rm(tdobject);
   }
@@ -136,7 +136,7 @@ convert_quotes = function(datasource,datadestination,ticker,extention="txt",head
   #assign column names
   if(header==FALSE){
   if(is.null(quotecolnames)){
-  quotecolnames = c("SYMBOL","DATE","EX","TIME","BID","BIDSIZE","OFFER","OFFERSIZE","MODE");  
+  quotecolnames = c("SYMBOL","DATE","EX","TIME","BID","BIDSIZ","OFR","OFRSIZ","MODE");  
   colnames(qdata)= quotecolnames;
   }else{
   colnames(qdata)= quotecolnames;
@@ -157,7 +157,7 @@ convert_quotes = function(datasource,datadestination,ticker,extention="txt",head
   tdobject=timeDate(test,format = format,FinCenter = "GMT",zone="GMT");
   tdobject=timeDate(test,format = format,FinCenter = "GMT",zone="GMT");
   qdata = xts(qdata,order.by=tdobject);
-  qdata = qdata[,c("SYMBOL","EX","BID","BIDSIZE","OFFER","OFFERSIZE","MODE")];
+  qdata = qdata[,c("SYMBOL","EX","BID","BIDSIZ","OFR","OFRSIZ","MODE")];
   }
 
   xts_name = paste(ticker[i],"_quotes.RData",sep="");
@@ -165,3 +165,4 @@ convert_quotes = function(datasource,datadestination,ticker,extention="txt",head
   save(qdata, file = xts_name);
   }
   }
+
