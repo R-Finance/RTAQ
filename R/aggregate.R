@@ -101,21 +101,30 @@ ts = dataformatc(ts);
 }
 
 #VOLUME: (specificity: always sum)
-agg_volume = function(ts,FUN = sumN,on="minutes",k=5, includeopen=FALSE){
-ts = dataformatc(ts);
-  if(!includeopen){ts3 = aggregatets(ts, FUN=sumN, on, k)}
-
-  if(includeopen){
-  ts2 = aggregatets(ts, FUN=sumN, on, k);
-  date = strsplit(as.character(index(ts))," ")[[1]][1]
-  realopen = "09:30:00";
-  a = as.timeDate(paste(date,realopen));
-  b = xts(as.numeric(ts[1]),a);
-  ts3 = c(b,ts2);
-  }
-return(ts3)
+agg_volume = function (ts, FUN = sumN, on = "minutes", k = 5, includeopen = FALSE) 
+{
+    ts = dataformatc(ts)
+    if (!includeopen) {
+        ts3 = aggregatets(ts, FUN = sumN, on, k)
+    }
+    if (includeopen) {
+        ts2 = aggregatets(ts, FUN = sumN, on, k)
+        date = strsplit(as.character(index(ts)), " ")[[1]][1]
+        realopen = "09:30:00"
+        a = as.timeDate(paste(date, realopen))
+        b = xts(as.numeric(ts[1]), a)
+        ts3 = c(b, ts2)
+	  }
+	#new
+	    realclose = "16:00:00";
+	    aa = as.timeDate(paste(date, realclose));
+	    condition = index(ts3) < aa;
+	    ts4 = ts3[condition];
+	    lastinterval = sum(as.numeric(ts3[!condition]));
+	    bb = xts(lastinterval, aa)
+	    ts4 = c(ts4, bb)
+    return(ts4)
 }
-
 
 ###TRADES AGGREGATION:
 agg_trades = function(tdata,on="minutes",k=5){

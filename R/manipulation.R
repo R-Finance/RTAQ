@@ -106,7 +106,11 @@ qdata = dataformatc(qdata);
   merged = merged[index(tdata)];
 
   #return useful parts:
-  merged = merged[,c((1:tt),((tt+3):(dim(merged)[2])))];
+	#remove duplicated SYMBOL & EX (new)
+	eff =  colnames(merged);
+	realnames = c("SYMBOL","EX","PRICE","SIZE","COND","CORR","G127","BID","BIDSIZ","OFR","OFRSIZ","MODE");
+	condition = (1:length(eff))[eff%in%realnames];
+	merged = merged[,condition];
 
   ##a bit rough but otherwise opening price disappears...
   merged = as.xts(na.locf(as.zoo(merged),fromLast=TRUE));
