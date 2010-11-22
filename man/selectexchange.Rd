@@ -1,6 +1,6 @@
-\name{selectexchange}
+\name{selectExchange}
 \Rdversion{1.1}
-\alias{selectexchange}
+\alias{selectExchange}
 \title{
 Retain only data from a single stock exchange
 }
@@ -9,7 +9,7 @@ Function returns an xts object containing the data of only 1 stock exchange.
 }
 
 \usage{
-selectexchange(data,exch="N");
+selectExchange(data,exch="N");
 }
 
 \arguments{
@@ -35,11 +35,10 @@ By default the NYSE is chosen (exch="N"). Other exchange symbols are:
 
 }
 
-\section{Details}{}
 
 \value{
 xts object
 }
-\references{
-}
+
 \author{ Jonathan Cornelissen and Kris Boudt}
+\keyword{ cleaning }

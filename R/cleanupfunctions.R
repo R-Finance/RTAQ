@@ -10,7 +10,7 @@ adjtime = function(z){
 ########## DATA CLEAN-UP: FOR ALL DATA #####################
 
 ####FUNCTION TO FILTER EXCHANGE HOURS ONLY: ExchangeHoursOnly
-ExchangeHoursOnly = function(data, daybegin = "09:30:00",dayend="16:00:00")
+exchangeHoursOnly = function(data, daybegin = "09:30:00",dayend="16:00:00")
 {
 data = dataformatc(data);
     # a function to excerpt data within exchange trading hours
@@ -37,23 +37,25 @@ data = dataformatc(data);
 }
 
 
-nozeroprices = function(tdata){
+noZeroPrices = function(tdata){
 tdata = dataformatc(tdata);
+tdatacheck(tdata);
 ####FUNCTION TO DELETE ZERO PRICES: nozeroprices
 filteredts = tdata[as.numeric(tdata$PRICE)!= 0];
 return(filteredts);
 }
 
 
-selectexchange = function(data,exch="N"){ 
+selectExchange = function(data,exch="N"){ 
 data = dataformatc(data);
 ###FUNCTION TO SELECT THE OBSERVATIONS OF A SINGLE EXCHANGE: selectexchange
 filteredts = data[data$EX==exch];
 return(filteredts);
 }
 
-autoselectexchange = function(tdata){
+autoSelectExchangeTrades = function(tdata){
 tdata = dataformatc(tdata);
+tdatacheck(tdata);
 ## AUTOSELECT EXCHANGE WITH HIGHEST NUMBER OF SHARES TRADED (for trades) ON:
 #function returns ts with obs of only 1 exchange
 #searches exchange with a maximum on the variable "SIZE"
@@ -94,8 +96,9 @@ tdata = dataformatc(tdata);
 #}
 
 #zivot
-salescond <- function (tdata)
+salesCondition <- function (tdata)
 {
+tdatacheck(tdata);
     filteredts = tdata[tdata$COND == "0" | tdata$COND == "E" |
         tdata$COND == "F" | tdata$COND == "" | tdata$COND == "@F"]
     return(filteredts)
@@ -129,8 +132,9 @@ waverage = function(a){
   return(b);
 }
 
-mergesametimestamp = function(tdata,selection="median"){
+mergeTradesSameTimestamp = function(tdata,selection="median"){
 tdata = dataformatc(tdata);
+tdatacheck(tdata);
   #find end points:
   ep = endpoints(tdata,"secs");
 
@@ -151,9 +155,11 @@ tdata = dataformatc(tdata);
 return(tdata2)
 }
 
-rmtradeoutliers = function(tdata,qdata){
+rmTradeOutliers = function(tdata,qdata){
 tdata = dataformatc(tdata);
 qdata = dataformatc(qdata);
+qdatacheck(qdata);
+tdatacheck(tdata);
 
 ##Function to delete entries with prices that are above the ask plus the bid-ask
 ##spread. Similar for entries with prices below the bid minus the bid-ask
@@ -167,23 +173,25 @@ qdata = dataformatc(qdata);
   upper = offer+spread;
   lower = bid-spread;
 
-  tdata[(price<upper) & (price>lower)];
+  tdata = tdata[(price<upper) & (price>lower)];
   return(tdata);
 }
 
 
 #################       QUOTE SPECIFIC FUNCTIONS:       #################
 
-nozeroquotes = function(qdata){
+noZeroQuotes = function(qdata){
 qdata = dataformatc(qdata);
+qdatacheck(qdata);
 ####FUNCTION TO DELETE ZERO QUOTES: nozeroquotes
 filteredts = qdata[as.numeric(qdata$BID)!= 0& as.numeric(qdata$OFR)!= 0];
 return(filteredts);
 }
 
 
-autoselectexchangeq = function(qdata){
+autoSelectExchangeQuotes = function(qdata){
 qdata = dataformatc(qdata);
+qdatacheck(qdata);
 ####Autoselect exchange with highest value for (bidsize+offersize)
   nobs=c();
   exchanges = c("Q","A","P","B","C","N","D","X","I","M","W","Z");
@@ -215,8 +223,9 @@ qdata = dataformatc(qdata);
 }
 
 
-mergequotessametimestamp = function(qdata,selection="median"){  ##FAST
+mergeQuotesSameTimestamp = function(qdata,selection="median"){  ##FAST
 qdata = dataformatc(qdata);
+qdatacheck(qdata);
   condition=selection=="median"|selection=="maxvolume"|selection=="weightedaverage";
   if(!condition){print(paste("WARNING:The result will be corrupted. Check whether",selection,"is an existing option for the attribute selection."))}
 
@@ -257,15 +266,17 @@ return(ts2)
 }
 
 
-rmnegspread = function(qdata){
+rmNegativeSpread = function(qdata){
 qdata = dataformatc(qdata);
+qdatacheck(qdata);
 ##function to remove observations with negative spread
   condition = as.numeric(qdata$OFR)>as.numeric(qdata$BID);
   qdata[condition];
 }
 
 
-rmlargespread = function(qdata,maxi=50){
+rmLargeSpread = function(qdata,maxi=50){
+qdatacheck(qdata);
 ##function to remove observations with a spread larger than 50 times the median spread that day
 ###WATCH OUT: works only correct if supplied input data consists of 1 day...
   spread = as.numeric(qdata$OFR)-as.numeric(qdata$BID);
@@ -273,9 +284,10 @@ rmlargespread = function(qdata,maxi=50){
   return(qdata[condition])
 }
 
-rmoutliers = function (qdata, maxi = 10, window = 50, type = "advanced")
+rmOutliers = function (qdata, maxi = 10, window = 50, type = "advanced")
 {
 qdata = dataformatc(qdata);
+qdatacheck(qdata);
 ##function to remove entries for which the mid-quote deviated by more than 10 median absolute deviations 
 ##from a rolling centered median (excluding the observation under consideration) of 50 observations if type = "standard".
 
@@ -288,7 +300,6 @@ qdata = dataformatc(qdata);
 ##3. Rolling median of the previous "window" observations
 
 ##NOTE: Median Absolute deviation chosen contrary to Barndorff-Nielsen et al.
-    print("NOTE: This function is only useful for quotes NOT for trades")
     window = floor(window/2) * 2
     condition = c();
     halfwindow = window/2;
@@ -357,6 +368,7 @@ qdata = dataformatc(qdata);
 ###zivot
 correctedTrades <- function (tdata)
 {
+tdatacheck(tdata);
     filteredts = tdata[tdata$CR == " 0"]
     return(filteredts)
 }

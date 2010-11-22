@@ -1,6 +1,6 @@
-\name{rmtradeoutliers}
+\name{rmTradeOutliers}
 \Rdversion{1.1}
-\alias{rmtradeoutliers}
+\alias{rmTradeOutliers}
 \title{
 Delete transactions with unlikely transaction prices
 }
@@ -9,7 +9,7 @@ Function deletes entries with prices that are above the ask plus the bid-ask spr
 Similar for entries with prices below the bid minus the bid-ask spread.}
 
 \usage{
-rmtradeoutliers(tdata,qdata)
+rmTradeOutliers(tdata,qdata)
 }
 
 \arguments{
@@ -29,6 +29,6 @@ cleaned trade (tdata) and quote (qdata) data respectively.
 \value{
 xts object
 }
-\references{
-}
+
 \author{ Jonathan Cornelissen and Kris Boudt}
+\keyword{ cleaning }

@@ -1,6 +1,6 @@
-\name{rmoutliers}
+\name{rmOutliers}
 \Rdversion{1.1}
-\alias{rmoutliers}
+\alias{rmOutliers}
 \title{
 Delete entries for which the mid-quote is outlying with respect to surrounding entries
 }
@@ -29,7 +29,7 @@ the median absolute deviation is taken over a subsample without constant mid-quo
 }
 
 \usage{
-rmoutliers(qdata,maxi=10,window=50,type="advanced")}
+rmOutliers(qdata,maxi=10,window=50,type="advanced")}
 
 \arguments{
   \item{qdata}{an xts object at least containing the columns "BID" and "OFR".} 
@@ -44,8 +44,14 @@ NOTE: This function works only correct if supplied input data consists of 1 day.
 \value{xts object}
 
 \references{
-Barndorff-Nielsen, O. E., P. R. Hansen, A. Lunde, and N. Shephard (2010).
-Realized kernels in practice: Trades and quotes. Econometrics Journal,
-forthcoming.}
+Barndorff-Nielsen, O. E., P. R. Hansen, A. Lunde, and N. Shephard (2009). Realized
+kernels in practice: Trades and quotes. Econometrics Journal 12, C1-C32.
+
+Brownlees, C.T. and Gallo, G.M. (2006). 
+Financial econometric analysis at ultra-high frequency: Data handling concerns,
+ Computational Statistics & Data Analysis, 51, pages 2232-2245.
+}
 
 \author{ Jonathan Cornelissen and Kris Boudt}
+
+\keyword{ cleaning }

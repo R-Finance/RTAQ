@@ -19,14 +19,13 @@ In a final step, the time series were aggregated to the 5-minute frequency by pr
 }
 \usage{data("sample_5minprices_jumps")}
 \format{xts object}
-\source{}
 \references{
 Barndorff-Nielsen, O. E., P. R. Hansen, A. Lunde and N. Shephard (2009). 
 Multivariate realised kernels: consistent positive semi-definite
 estimators of the covariation of equity prices with noise and non-synchronous
-trading. Working paper.
+trading. Journal of Econometrics, forthcoming.
 
-Boudt, K., C. Croux, and S. Laurent (2008). Outlyingness weighted quadratic
+Boudt, K., C. Croux, and S. Laurent (2008). Outlyingness weighted 
 covariation. Mimeo.
 }
 \keyword{datasets}

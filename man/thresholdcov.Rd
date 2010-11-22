@@ -1,11 +1,13 @@
-\name{thresholdcov}
+\name{thresholdCov}
 \Rdversion{1.1}
-\alias{thresholdcov}
+\alias{thresholdCov}
 \title{
 Threshold Covariance}
 
 \description{
 Function returns the treshold covariance matrix proposed in Gobbi and Mancini (2009).
+ Unlike the \code{\link{ROWCov}}, the THRESCov uses univariate jump detection rules to truncate the effect of jumps on the covariance
+estimate. As such, it remains feasible in high dimensions, but it is less robust to small cojumps. 
 
 Let \eqn{r_{t,i}} be an intraday \eqn{N x 1} return vector and \eqn{i=1,...,M}
 the number of intraday returns.
@@ -14,20 +16,21 @@ Then, the \eqn{k,q}-th element of the threshold covariance matrix is defined as
 \deqn{
 \mbox{tresholdcov}[k,q]_{t} = \sum_{i=1}^{M} r_{(k)t,i} 1_{\{r_{(k)t,i}^2 \leq TR_{M}\}}  \ \ r_{(q)t,i} 1_{\{r_{(q)t,i}^2 \leq TR_{M}\}},
 }
-
-with the treshold value \eqn{TR_{M}} taken as suggested in Jacod and Todorov (2009).
+with the treshold value \eqn{TR_{M}} set to \eqn{9 \Delta^{-1}} times the daily realized bi-power variation of asset \eqn{k}, 
+as suggested in Jacod and Todorov (2009).
 }
 
 \usage{
-thresholdcov(data)
+thresholdCov(rdata,cor=FALSE,makeReturns=FALSE,...)
 }
 
 \arguments{
-  \item{data}{ a \eqn{(M x N)} matrix/zoo/xts object containing the \eqn{N}
+  \item{rdata}{ a \eqn{(M x N)} matrix/zoo/xts object containing the \eqn{N}
 return series over period \eqn{t}, with \eqn{M} observations during \eqn{t}.}
+\item{cor}{boolean, in case it is TRUE, the correlation is returned. FALSE by default.}
+\item{makeReturns}{boolean, should be TRUE when rdata contains prices instead of returns. FALSE by default.}
+\item{...}{additional arguments.}
 }
-
-\section{Details}{}
 
 \value{
 an \eqn{N x N} matrix
@@ -40,9 +43,15 @@ paper, Nuffield College, Oxford University.
 
 Jacod, J. and V. Todorov (2009). Testing for common arrival of jumps in
 discretely-observed multidimensional processes. Annals of Statistics 37,
-1792-1838.}
+1792-1838.
+
+Mancini, C. and F. Gobbi (2009). Identifying the covariation between the diffusion
+parts and the co-jumps given discrete observations. Mimeo.
+}
 
 \author{ Jonathan Cornelissen and Kris Boudt}
+
+\keyword{ volatility}
 
 %cd C:\package\TradeAnalytics\pkg\RTAQ\man
 %R CMD Rdconv --type=html --output=sample_5minprices.htm sample_5minprices.Rd

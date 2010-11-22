@@ -1,5 +1,5 @@
 #MANIPULATION FUNCTIONS:
-TAQload = function(tickers,from,to,trades=TRUE,quotes=FALSE,datasource=NULL,variables=NULL){ 
+TAQLoad = function(tickers,from,to,trades=TRUE,quotes=FALSE,datasource=NULL,variables=NULL){ 
   if( is.null(datasource)){print("Please provide the argument 'datasource' to indicate in which folder your data is stored")}
 
   if(!(trades&quotes)){#not both trades and quotes demanded
@@ -25,13 +25,15 @@ uniTAQload = function(ticker,from,to,trades=TRUE,quotes=FALSE,datasource=NULL,va
   dates = timeSequence(as.character(from),as.character(to), format = "%Y-%m-%d", FinCenter = "GMT")
   dates = dates[isBizday(dates, holidays = holidayNYSE(2004:2010))];
 
-  if(trades){
+  if(trades){ tdata=NULL;
   for(i in 1:length(dates)){
   datasourcex = paste(datasource,"\\",dates[i],sep="");
   filename = paste(datasourcex,"\\",ticker,"_trades.RData",sep="");
 
   ifmissingname = paste(datasourcex,"\\missing_",ticker,".RData",sep="");  
-  if(file.exists(ifmissingname)){stop(paste("no trades available on ",dates[i],sep=""))}
+
+  if(file.exists(ifmissingname)){stop(paste("No trades available on ",dates[i],sep=""))}
+  if(!file.exists(filename)){stop(paste("The file ",filename," does not exist. Please read the documentation.",sep=""))}
   if(file.exists(ifmissingname)==FALSE){
   load(filename);
   if(i==1)	{
@@ -53,13 +55,14 @@ uniTAQload = function(ticker,from,to,trades=TRUE,quotes=FALSE,datasource=NULL,va
 				}
 				}
 
-  if(quotes){
+  if(quotes){ qdata=NULL;
   for(i in 1:length(dates)){
   datasourcex = paste(datasource,"\\",dates[i],sep="");
   filename = paste(datasourcex,"\\",ticker,"_quotes.RData",sep="");
   ifmissingname = paste(datasourcex,"\\missingquotes_",ticker,".RData",sep="");
   
   if(file.exists(ifmissingname)){stop(paste("no quotes available on ",dates[i],sep=""))}
+  if(!file.exists(filename)){stop(paste("The file ",filename," does not exist. Please read the documentation.",sep=""))}
   if(file.exists(ifmissingname)==FALSE){
   load(filename);
 
@@ -88,9 +91,12 @@ uniTAQload = function(ticker,from,to,trades=TRUE,quotes=FALSE,datasource=NULL,va
   }
 
 
-matchtq = function(tdata,qdata,adjustment=2){ ##FAST VERSION
+matchTradesQuotes = function(tdata,qdata,adjustment=2){ ##FAST VERSION
 tdata = dataformatc(tdata);
 qdata = dataformatc(qdata);
+qdatacheck(qdata);
+tdatacheck(tdata);
+
   tt = dim(tdata)[2];  
   index(qdata) = index(qdata) + adjustment;
 
@@ -119,43 +125,46 @@ qdata = dataformatc(qdata);
   return(merged)
 }
 
-matchtq_old = function(tdata,qdata,adjustment=2){ ##FAST VERSION
-qdata = dataformatc(qdata);
-tdata = dataformatc(tdata);
+#matchtq_old = function(tdata,qdata,adjustment=2){ ##FAST VERSION
+#qdata = dataformatc(qdata);
+#tdata = dataformatc(tdata);
+#
+#  tt = dim(tdata)[2];  
+#  index(qdata) = index(qdata) + adjustment;
+#  
+#  #merge:
+#  counter = xts(as.character(1:dim(qdata)[1]),order.by=index(qdata))#an integer for every quote
+#  merged = cbind(qdata,counter);
+#  merged = merge(tdata,merged);
+#  
+#  ##fill NA's:
+#  merged[,((tt+1):dim(merged)[2])] = na.locf(as.zoo(merged[,((tt+1):dim(merged)[2])]), na.rm=FALSE);
+#  
+#  #Select trades:
+#  merged = merged[index(tdata)];
+#  
+#  #Remove duplicated quotes:
+#  merged = merged[!duplicated(merged[,dim(merged)[2]])];
+#
+#  #return usefull parts:
+#  merged = merged[,c((1:tt),((tt+3):(dim(merged)[2]-1)))];
+#
+#  return(merged)
+#}
 
-  tt = dim(tdata)[2];  
-  index(qdata) = index(qdata) + adjustment;
-  
-  #merge:
-  counter = xts(as.character(1:dim(qdata)[1]),order.by=index(qdata))#an integer for every quote
-  merged = cbind(qdata,counter);
-  merged = merge(tdata,merged);
-  
-  ##fill NA's:
-  merged[,((tt+1):dim(merged)[2])] = na.locf(as.zoo(merged[,((tt+1):dim(merged)[2])]), na.rm=FALSE);
-  
-  #Select trades:
-  merged = merged[index(tdata)];
-  
-  #Remove duplicated quotes:
-  merged = merged[!duplicated(merged[,dim(merged)[2]])];
-
-  #return usefull parts:
-  merged = merged[,c((1:tt),((tt+3):(dim(merged)[2]-1)))];
-
-  return(merged)
-}
 
 
+getTradeDirection = function(tqdata,...){
+  if(hasArg(data)){ tqdata = data; rm(data) }
+  tqdata = dataformatc(tqdata);
+  tqdatacheck(tqdata); 
 
-gettradedir = function(data){
-data = dataformatc(data);
 ##Function returns a vector with the inferred trade direction:
 ##NOTE: the value of the first (and second) observation should be ignored if price=midpoint for the first (second) observation.
-  bid = as.numeric(data$BID);
-  offer = as.numeric(data$OFR);
+  bid = as.numeric(tqdata$BID);
+  offer = as.numeric(tqdata$OFR);
   midpoints = (bid + offer)/2;
-  price = as.numeric(data$PRICE);
+  price = as.numeric(tqdata$PRICE);
  
   buy1 = price > midpoints; #definitely a buy
   equal = price == midpoints;
@@ -171,7 +180,6 @@ data = dataformatc(data);
   return(buy);
 }
 
-
 es = function(data){
 data = dataformatc(data);
 #returns the effective spread as xts object
@@ -184,7 +192,6 @@ data = dataformatc(data);
   es=xts(2*d*(price-midpoints),order.by=index(data));
   return(es);
 }
-
 
 rs = function(data,tdata,qdata){
 data = dataformatc(data);
@@ -306,10 +313,10 @@ data = dataformatc(data);
   return(prs_xts);
 }
 
-price_impact = function(data){
+price_impact = function(data,tdata,qdata){
 data = dataformatc(data);
 #returns the Price impact as xts object
-  rs = rs(data);
+  rs = rs(data,tdata,qdata);
   es = es(data);
 
   pi = (es-rs)/2;
@@ -317,10 +324,10 @@ data = dataformatc(data);
   return(pi_xts);
 }
 
-prop_price_impact = function(data){
+prop_price_impact = function(data,tdata,qdata){
 data = dataformatc(data);
 #returns the Proportional Price impact as xts object
-  rs = rs(data);
+  rs = rs(data,tdata,qdata);
   es = es(data);
   bid = as.numeric(data$BID);
   offer = as.numeric(data$OFR);
@@ -355,7 +362,7 @@ data = dataformatc(data);
   pts = (d*(price-midpoints))/midpoints;
 
   pts_xts = xts(pts,order.by=index(data));
-  return(ts);
+  return(pts_xts);
 }
 
 p_return_sqr = function(data){
@@ -439,8 +446,6 @@ data = dataformatc(data);
   return(logqslope_xts);
 }
 
-
-
 mq_return_sqr = function(data){
 data = dataformatc(data);
 #returns midquote squared returns slope as xts object
@@ -463,76 +468,39 @@ data = dataformatc(data);
   return(mq_return_abs_xts);
 }
 
-liquidity <- function (data, tdata, qdata)
-{
-data = dataformatc(data);
-qdata = dataformatc(qdata);
-tdata = dataformatc(tdata);
-##Function computes many liquidity measures and returns an xts object containing them
+tqLiquidity <- function(tqdata=NULL,tdata=NULL,qdata=NULL,type,...) {
+  if(hasArg(data)){ tqdata = data }
+  if(!is.null(tqdata)){tqdatacheck(tqdata)}
+  if(!is.null(qdata)){qdatacheck(qdata)}
+  if(!is.null(tdata)){tdatacheck(tdata)}
+  
+  result=switch(type,
+  es = es(tqdata),
+  rs = rs(tqdata,tdata,qdata),
+  value_trade = value_trade(tqdata),
+  signed_value_trade = signed_value_trade(tqdata),
+  di_diff = di_diff(tqdata),
+  pes = pes(tqdata),
+  prs = prs(tqdata,tdata,qdata),
+  price_impact = price_impact(tqdata,tdata,qdata),
+  prop_price_impact = prop_price_impact(tqdata,tdata,qdata),
+  tspread =tspread(tqdata),
+  pts = pts(tqdata),
+  p_return_sqr = p_return_sqr(tqdata),
+  p_return_abs = p_return_abs(tqdata),
+  qs = qs(tqdata),
+  pqs = pqs(tqdata),
+  logqs = logqs(tqdata),
+  logsize = logsize(tqdata),
+  qslope = qslope(tqdata),
+  logqslope = logqslope(tqdata),
+  mq_return_sqr = mq_return_sqr(tqdata),
+  mq_return_abs = mq_return_abs(tqdata),
+  signed_trade_size = signed_trade_size(tqdata)
+  )
 
-##First part solves the problem that unequal number of obs (in data and data2) is possible when computing the RS
-
-    data2 = matchtq(tdata, qdata, adjustment = 300)
-    if (dim(data2)[1] > dim(data)[1]) {
-        condition = as.vector(as.character(index(data2))) %in%
-            as.vector(as.character(index(data)))
-        data2 = subset(data2, condition, select = 1:(dim(data)[2]))
-        data = subset(data, as.vector(as.character(index(data))) %in%
-            as.vector(as.character(index(data2))), select = 1:(dim(data2)[2]))
-    }
-    if (dim(data2)[1] < dim(data)[1]) {
-        condition = as.vector(as.character(index(data))) %in%
-            as.vector(as.character(index(data2)))
-        data = subset(data, condition, select = 1:(dim(data2)[2]))
-        data2 = subset(data2, as.vector(as.character(index(data2))) %in%
-            as.vector(as.character(index(data))), select = 1:(dim(data)[2]))
-    }
-    bid = as.numeric(data$BID)
-    offer = as.numeric(data$OFR)
-    midpoints = (bid + offer)/2
-    price = as.numeric(data$PRICE)
-    size = as.numeric(data$SIZE)
-    d = gettradedir(data)
-    bidsize = as.numeric(data$BIDSIZ)
-    offersize = as.numeric(data$OFRSIZ)
-    return = c(0, log(price[2:length(price)]) - log(price[1:length(price) -
-        1]))
-    mq_return = mq_return(data)
-    midpoints2 = (as.numeric(data2$BID) + as.numeric(data2$OFR))/2
-    es = 2 * d * (price - midpoints)
-    rs = 2 * d * (price - midpoints2)
-    value_trade = price * size
-    signed_value_trade = d * price * size
-    signed_trade_size = d * size
-    di_diff = (d * (offersize - bidsize))/(offersize + bidsize)
-    di_div = (offersize/bidsize)^d
-    pes = 100 * es/midpoints
-    prs = 100 * rs/midpoints
-    price_impact = (es - rs)/2
-    prop_price_impact = (100 * price_impact)/midpoints
-    tspread = d * (price - midpoints)
-    pts = tspread/midpoints
-    p_return_sqr = return^2
-    p_return_abs = abs(return)
-    qs = offer - bid
-    pqs = 100 * qs/midpoints
-    logqs = log(offer/bid)
-    logsize = log(bidsize) + log(offersize)
-    qslope = qs/logsize
-    logqslope = logqs/logsize
-    mq_return_sqr = mq_return^2
-    mq_return_abs = abs(mq_return)
-    liquid = cbind(es, rs, value_trade, signed_value_trade, di_diff,
-        di_div, pes, prs, price_impact, prop_price_impact, tspread,
-        pts, p_return_sqr, p_return_abs, qs, pqs, logqs, logsize,
-        qslope, logqslope, mq_return_sqr, mq_return_abs)
-    names = c("es", "rs", "value_trade", "signed_value_trade",
-        "di_diff", "di_div", "pes", "prs", "price_impact", "prop_price_impact",
-        "tspread", "pts", "p_return_sqr", "p_return_abs", "qs", "pqs",
-        "logqs", "logsize", "qslope", "logqslope", "mq_return_sqr",
-        "mq_return_abs")
-    colnames(liquid) = names
-    return(liquid)
+  colnames(result)=type;
+  return(result);
 }
 
 ##help_function:
@@ -550,14 +518,23 @@ data = dataformatc(data);
 
 
 ###Zivot:
-p_return <- function (data)
-{
-    price = as.numeric(data$PRICE)
-    log.return = c(0, log(price[2:length(price)]) - log(price[1:length(price) -
-        1]))
-    return_xts = xts(log.return, order.by = index(data))
-    return(return_xts)
+makeReturns = function(ts){
+  l = dim(ts)[1];
+  x = matrix(as.numeric(ts),nrow=l);
+  x[(2:l),] = log(x[(2:l),]) - log(x[(1:(l-1)),])
+  x[1,] = rep(0,dim(ts)[2]);
+  x = xts(x,order.by=index(ts));
+  return(x);
 }
+
+#p_return <- function (data)
+#{
+#    price = as.numeric(data$PRICE)
+#    log.return = c(0, log(price[2:length(price)]) - log(price[1:length(price) -
+#        1]))
+#    return_xts = xts(log.return, order.by = index(data))
+#    return(return_xts)
+#}
 
 p_return_abs <- function (data)
 {

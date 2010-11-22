@@ -10,11 +10,12 @@ It can handle irregularly spaced timeseries and returns a regularly spaced one.
 }
 
 \usage{
-aggregatets(ts, FUN=previoustick, on="minutes", k=1, weights=NULL,dropna=F)
+aggregatets(ts, FUN="previoustick", on="minutes", k=1, weights=NULL,
+              dropna=FALSE)
 }
 
 \arguments{
-\item{ts}{ xts object, containing the original time series.}
+\item{ts}{ xts object to aggregate.}
 \item{FUN}{ function to apply over each interval. By default, previous tick aggregation is done. 
 In case weights are supplied, this argument is ignored and a weighted average is taken.}
 \item{on}{ character, indicating the time scale in which "k" is expressed. Possible values are: "secs", "seconds", "mins", "minutes","hours", "days", "weeks".}
@@ -26,7 +27,8 @@ When you assign an xts object with wheights to this argument, a weighted mean is
 Of course, the weights should have the same timestamps as the supplied time series.
 }
 \item{dropna}{ boolean, which determines whether empty intervals should be dropped.
-By default, an NA is returned in case an interval is empty.}
+By default, an NA is returned in case an interval is empty, except when the user opts
+for previous tick aggregation, by setting FUN="previoustick" (default).}
 }
 
 \section{Details}{
@@ -38,16 +40,30 @@ for on="seconds"/"minutes"/"hours",
  the element of the returned series with e.g. timestamp 09:35:00 contains 
 the last observation up to that point, excluding the value at 09:35:00 itself.
 
-Please Note:
-In case an interval is empty, by default an NA is returned. In case e.g. previous 
-tick aggregation it makes sense to fill these NA's by the function \code{na.locf}
-(last observation carried forward) from the zoo package.
+%Please Note:
+%In case an interval is empty, by default an NA is returned. In case e.g. previous 
+%tick aggregation it makes sense to fill these NA's by the function \code{na.locf}
+%(last observation carried forward) from the zoo package.
 }
 
 \value{
 An xts object containing the aggregated time series.
 }
 
-\references{}
-
 \author{ Jonathan Cornelissen and Kris Boudt}
+\keyword{data manipulation}
+\examples{
+#load sample price data
+data("sample_tdata");
+ts = sample_tdata$PRICE;
+
+#Previous tick aggregation to the 5-minute sampling frequency:
+tsagg5min = aggregatets(ts,on="minutes",k=5);
+head(tsagg5min);
+
+#Previous tick aggregation to the 30-second sampling frequency:
+tsagg30sec = aggregatets(ts,on="seconds",k=30);
+tail(tsagg30sec);
+}
+
+

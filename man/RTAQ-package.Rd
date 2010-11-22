@@ -23,15 +23,18 @@ Kris Boudt, Jonathan Cornelissen
 
 Maintainer: Jonathan Cornelissen <Jonathan.cornelissen@econ.kuleuven.be>
 }
-\references{
-%~~ Literature or other references for background information ~~
-}
 
-\keyword{ package, trades, quotes, NYSE, high-frequency, volatility, liquidity }
-\seealso{
+%\references{
+%~~ Literature or other references for background information ~~
+%}
+
+%\keyword{ package, trades, quotes, NYSE, high-frequency, volatility, liquidity }
+%\keyword{ volatility}
+
+%\seealso{
 %~~ Optional links to other man pages, e.g. ~~
 %~~ \code{\link[<pkg>:<pkg>-package]{<pkg>}} ~~
-}
-\examples{
+%}
+%\examples{
 %~~ simple examples of the most important functions ~~
-}
+%}

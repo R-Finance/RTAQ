@@ -1,22 +1,26 @@
-\name{quotescleanup}
+\name{quotesCleanup}
 \Rdversion{1.1}
-\alias{quotescleanup}
+\alias{quotesCleanup}
 \title{
 Cleans quote data
 }
 
 \description{
-The function performs a bunch of cleaning procedures for quote 
-data for all stocks in "ticker" over the interval [from,to] and saves the
-result in the folder datadestination. 
+This is a wrapper function for cleaning the quote data of all stocks in "ticker" over the interval [from,to]. 
+The result is saved in the folder datadestination. 
+
+In case you supply the argument "rawqdata", the on-disk functionality is ignored
+ and the function returns a list with the cleaned quotes as xts object (see examples).
 
 The following cleaning functions are performed sequentially:
-\code{\link{nozeroquotes}}, \code{\link{selectexchange}}, \code{\link{rmlargespread}},
-\code{\link{mergequotessametimestamp}}, \code{\link{rmoutliers}}.
+\code{\link{noZeroQuotes}}, \code{\link{selectExchange}}, \code{\link{rmLargeSpread}},
+\code{\link{mergeQuotesSameTimestamp}}, \code{\link{rmOutliers}}.
 }
 
 \usage{
-quotescleanup(from,to,datasource,datadestination,ticker,exchange)
+quotesCleanup(from,to,datasource,datadestination,ticker,exchanges,
+              qdataraw,report,selection,maxi,window,type,
+              rmoutliersmaxi,...)
 }
 
 \arguments{
@@ -24,8 +28,9 @@ quotescleanup(from,to,datasource,datadestination,ticker,exchange)
 \item{to}{character indicating last date to clean, e.g. "2008-01-31".}
 \item{datasource}{character indicating the folder in which the original data is stored.}
 \item{datadestination}{character indicating the folder in which the cleaned data is stored.}
-\item{ticker}{vector of tickers for which the data should be cleaned.}
-\item{exchange}{vector of stock exchange symbols for all tickers in vector "ticker".
+\item{ticker}{vector of tickers for which the data should be cleaned, e.g. ticker = c("AAPL","AIG")}.
+\item{exchanges}{vector of stock exchange symbols for all tickers in vector "ticker". It thus should have the same length as the vector ticker.
+Only data from one exchanges will be retained for each stock respectively, e.g. exchanges = c("T","N").
 The possible exchange symbols are:
 \itemize{
 \item A: AMEX
@@ -42,16 +47,52 @@ The possible exchange symbols are:
 \item Z: BATS
 }
 }
+\item{qdataraw}{xts object containing (ONE day and for ONE stock only) raw quote data. This argument is NULL by default. Enabling it means the arguments
+from, to, datasource and datadestination will be ignored. (only advisable for small chunks of data)}
+\item{report}{boolean and TRUE by default. In case it is true the function returns (also) a vector indicating how many quotes remained
+after each cleaning step.}
+\item{selection}{argument to be passed on to the cleaning routine \code{\link{mergeQuotesSameTimestamp}}. The default is "median".}
+\item{maxi}{argument to be passed on to the cleaning routine \code{\link{rmLargeSpread}}. }
+\item{window}{argument to be passed on to the cleaning routine \code{\link{rmOutliers}}. }
+\item{type}{argument to be passed on to the cleaning routine \code{\link{rmOutliers}}.}
+\item{rmoutliersmaxi}{argument to be passed on to the cleaning routine \code{\link{rmOutliers}}. }                                                                                              
+\item{...}{additional arguments.}
 }
 
-\section{Details}{}
 
 \value{For each day an xts object is saved into the folder of that date, containing the cleaned data.
-This procedure is performed for each stock in "ticker".}
+This procedure is performed for each stock in "ticker". 
+The function returns a vector indicating how many quotes remained after each cleaning step.
+
+In case you supply the argument "rawqdata", the on-disk functionality is ignored
+ and the function returns a list with the cleaned quotes as xts object (see examples).
+}
 
 \references{
-Barndorff-Nielsen, O. E., P. R. Hansen, A. Lunde, and N. Shephard (2010).
-Realized kernels in practice: Trades and quotes. Econometrics Journal,
-forthcoming.}
+Barndorff-Nielsen, O. E., P. R. Hansen, A. Lunde, and N. Shephard (2009). Realized
+kernels in practice: Trades and quotes. Econometrics Journal 12, C1-C32.
 
-\author{ Jonathan Cornelissen and Kris Boudt}
+Brownlees, C.T. and Gallo, G.M. (2006). 
+Financial econometric analysis at ultra-high frequency: Data handling concerns,
+ Computational Statistics & Data Analysis, 51, pages 2232-2245.
+
+Falkenberry, T.N. (2002) "High frequency data filtering", unpublished technical report.
+}
+
+\author{Jonathan Cornelissen and Kris Boudt}
+
+\examples{
+#Consider you have raw quote data for 1 stock for 1 day 
+data("sample_qdataraw");
+head(sample_qdataraw);
+dim(sample_qdataraw);
+qdata_aftercleaning = quotesCleanup(qdataraw=sample_qdataraw,exchanges="N");
+qdata_aftercleaning$report; 
+barplot(qdata_aftercleaning$report);
+dim(qdata_aftercleaning$qdata);
+
+#In case you have more data it is advised to use the on-disk functionality
+#via "from","to","datasource",etc. arguments
+}
+
+\keyword{ cleaning }

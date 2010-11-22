@@ -1,6 +1,6 @@
-\name{rmlargespread}
+\name{rmLargeSpread}
 \Rdversion{1.1}
-\alias{rmlargespread}
+\alias{rmLargeSpread}
 \title{
 Delete entries for which the spread is more than "maxi" times the median
 spread
@@ -11,7 +11,7 @@ spread on that day.
 }
 
 \usage{
-rmlargespread(qdata)
+rmLargeSpread(qdata,maxi)
 }
 
 \arguments{
@@ -25,6 +25,7 @@ which means that entries are deleted if the spread is more than 50 times the med
 \value{
 xts object
 }
-\references{
-}
+
 \author{ Jonathan Cornelissen and Kris Boudt}
+
+\keyword{ cleaning }

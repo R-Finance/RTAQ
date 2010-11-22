@@ -17,15 +17,14 @@ Then, the MinRV is given by
 }
 
 \usage{
-MinRV(data)
+MinRV(rdata,...)
 }
 
 \arguments{
-  \item{data}{ a zoo/xts object containing all returns in period t for one asset. }
+  \item{rdata}{ a zoo/xts object containing all returns in period t for one asset. }
+\item{...}{additional arguments.}
 }
 
-\section{Details}{
-}
 
 \value{
 numeric
@@ -37,6 +36,8 @@ estimation using nearest neighbor truncation. NBER Working Paper No.
 15533.}
 
 \author{ Jonathan Cornelissen and Kris Boudt}
+
+\keyword{ volatility}
 
 %cd C:\package\TradeAnalytics\pkg\RTAQ\man
 %R CMD Rdconv --type=html --output=sample_5minprices.htm sample_5minprices.Rd

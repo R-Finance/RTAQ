@@ -1,25 +1,25 @@
-\name{noZeroQuotes}
+\name{rmNegativeSpread}
 \Rdversion{1.1}
-\alias{noZeroQuotes}
+\alias{rmNegativeSpread}
 \title{
-Delete the observations where the bid or ask is zero
+Delete entries for which the spread is negative
 }
 \description{
-Function deletes the observations where the bid or ask is zero.
+Function deletes entries for which the spread is negative.
 }
 
 \usage{
-noZeroQuotes(qdata)
+rmNegativeSpread(qdata)
 }
 
 \arguments{
   \item{qdata}{an xts object at least containing the columns "BID" and "OFR".} 
 }
 
+
 \value{
 xts object
 }
 
 \author{ Jonathan Cornelissen and Kris Boudt}
-
 \keyword{ cleaning }

@@ -17,18 +17,22 @@ Then, the ROWCov is given by
 \deqn{
 \mbox{ROWCov}_{t}=c_{w}\frac{\sum_{i=1}^{M}w(d_{t,i})r_{t,i}r'_{t,i}}{\frac{1}{M}\sum_{i=1}^{M}w(d_{t,i})},
 }
-where \eqn{w(\cdot)} is a hard rejection weight function and \eqn{c_{w}} the corresponding 
-correction factor, assuming the returns follow a normal distribution, 
-as described in Boudt et al. (2008).
+The weight  \eqn{w_{i,\Delta}} is one if the multivariate jump test statistic for \eqn{r_{i,\Delta}} in Boudt et al. (2008) is less 
+than the 99.9\% percentile of the chi-square distribution with \eqn{N} degrees of freedom and zero otherwise. 
+The scalar \eqn{c_{w}} is a correction factor ensuring consistency of the ROWCov for the Integrated Covariance, 
+under the Brownian Semimartingale with Finite Activity Jumps model. 
 }
 
 \usage{
-ROWCov(data, seasadjR = NULL, wfunction = "HR" , alphaMCD = 0.5, alpha = 0.001)
+ROWCov(rdata, cor = FALSE, makeReturns=FALSE, seasadjR = NULL, 
+        wfunction = "HR" , alphaMCD = 0.75, alpha = 0.001,...)
 }
 
 \arguments{
-  \item{data}{ a \eqn{(M x N)} matrix/zoo/xts object containing the \eqn{N}
+  \item{rdata}{ a \eqn{(M x N)} matrix/zoo/xts object containing the \eqn{N}
 return series over period \eqn{t}, with \eqn{M} observations during \eqn{t}.}
+\item{cor}{ boolean, in case it is TRUE, the correlation is returned. FALSE by default.}
+\item{makeReturns}{boolean, should be TRUE when rdata contains prices instead of returns. FALSE by default.}
   \item{seasadjR}{ a \eqn{(M x N)} matrix/zoo/xts object containing 
 the seasonaly adjusted returns. This is an optional argument.}
    \item{wfunction}{ determines whether 
@@ -44,20 +48,30 @@ robustbase package.}
    \item{alpha}{ is a parameter between 0 en 0.5, 
 that determines the rejection threshold value 
 (see Boudt et al. (2008) for details).}
+\item{...}{additional arguments.}
 }
-
-\section{Details}{}
 
 \value{
 an \eqn{N x N} matrix
 }
 
+\details{
+Advantages of the ROWCov compared to the \code{\link{RBPCov}} include a higher statistical efficiency, positive semidefiniteness and affine equivariance.
+However, the ROWCov suffers from a curse of dimensionality.
+Indeed, the ROWCov gives a zero weight to a return vector
+if at least one of the components is affected by a jump.
+In the case of independent jump occurrences, the average proportion of observations
+with at least one component being affected by jumps increases fast with the dimension
+of the series. This means that a potentially large proportion of the returns receives
+a zero weight, due to which the ROWCov can have a low finite sample efficiency in higher dimensions
+}
+
 \references{
-Boudt, K., C. Croux, and S. Laurent (2008). Outlyingness weighted quadratic
-covariation. Mimeo.
+Boudt, K., C. Croux, and S. Laurent (2008). Outlyingness weighted covariation. Mimeo.
 }
 
 \author{ Jonathan Cornelissen and Kris Boudt}
 
+\keyword{ volatility}
 %cd C:\package\TradeAnalytics\pkg\RTAQ\man
 %R CMD Rdconv --type=html --output=sample_5minprices.htm sample_5minprices.Rd

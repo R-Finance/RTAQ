@@ -1,6 +1,6 @@
-\name{TAQload}
+\name{TAQLoad}
 \Rdversion{1.1}
-\alias{TAQload}
+\alias{TAQLoad}
 \title{
 Load trade or quote data into R}
 
@@ -17,7 +17,8 @@ this shall be the case. Please find more information in the pdf documentation.
 }
 
 \usage{
-TAQload(tickers,from,to,trades=TRUE,quotes=FALSE,datasource=NULL,variables=NULL)
+TAQLoad(tickers,from,to,trades=TRUE,quotes=FALSE,
+          datasource=NULL,variables=NULL)
 }
 
 \arguments{
@@ -31,10 +32,31 @@ It is recommended that you use only 1 ticker as input in case of non-synchronic 
 \item{variables}{ a character (or character vector) containing the name(s) of the variable(s) that should be loaded, e.g. c("SYMBOL","PRICE"). By default all data is loaded.}
 }
 
-\section{Details}{}
 
 \value{see section \code{description}}
 
-\references{}
-
 \author{ Jonathan Cornelissen and Kris Boudt}
+\keyword{data manipulation}
+
+\examples{
+#In order for these examples to work, the folder datasource 
+#should contain two folders named 2008-01-02 and 2008-01-03.
+#These folder contain the files with the trade data,
+#which are named "AAPL_trades.RData" or "AA_trades.RData".
+
+from="2008-01-02";
+to = "2008-01-03";
+\dontrun{datasource="C:\\data";}
+
+#TAQLoad: load data for stock AAPL
+\dontrun{xx = TAQLoad(tickers="AAPL",from,to,trades=TRUE,quotes=FALSE,
+datasource=datasource,variables=NULL)}
+\dontrun{head(xx);}
+
+#Load only price data for stocks AA and AAPL
+\dontrun{xx = TAQLoad(tickers=c("AA","AAPL"),from,to,trades=TRUE,
+quotes=FALSE,datasource=datasource,variables="PRICE")}
+\dontrun{head(xx);                                                                                                    }
+\dontrun{tail(xx);                                                                                                    }
+}
+

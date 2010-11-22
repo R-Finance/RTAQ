@@ -1,6 +1,6 @@
-\name{mergequotessametimestamp}
+\name{mergeQuotesSameTimestamp}
 \Rdversion{1.1}
-\alias{mergequotessametimestamp}
+\alias{mergeQuotesSameTimestamp}
 \title{
 Merge multiple quote entries with the same time stamp
 }
@@ -10,11 +10,11 @@ by a single one and returns an xts object with unique time stamps only.
 }
 
 \usage{
-mergequotessametimestamp(qdata,selection="median")
+mergeQuotesSameTimestamp(qdata,selection="median")
 }
 
 \arguments{
-  \item{tdata}{ an xts object containing the time series data, with 
+  \item{qdata}{ an xts object containing the time series data, with 
 at least two columns named "BID" and "OFR" indicating the bid and ask price 
 and two columns "BIDSIZ", "OFRSIZ" indicating the number of round lots available at these 
 prices. }
@@ -30,11 +30,11 @@ weighted by "BIDSIZ" ("OFRSIZ").
 }
 }
 
-\section{Details}{}
 
 \value{
 xts object
 }
-\references{
-}
+
 \author{ Jonathan Cornelissen and Kris Boudt}
+
+\keyword{ cleaning }

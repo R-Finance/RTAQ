@@ -1,6 +1,6 @@
-\name{nozeroprices}
+\name{noZeroPrices}
 \Rdversion{1.1}
-\alias{nozeroprices}
+\alias{noZeroPrices}
 \title{
 Delete the observations where the price is zero
 }
@@ -9,18 +9,17 @@ Function deletes the observations where the price is zero.
 }
 
 \usage{
-nozeroprices(tdata);
+noZeroPrices(tdata)
 }
 
 \arguments{
   \item{tdata}{an xts object at least containing a column "PRICE".} 
 }
 
-\section{Details}{}
-
 \value{
 xts object
 }
-\references{
-}
+
 \author{ Jonathan Cornelissen and Kris Boudt}
+
+\keyword{ cleaning }
