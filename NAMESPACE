@@ -64,7 +64,8 @@ makeReturns,
 #rest :
 spotVol, 
 sumN,                       #TODO with match.fun!!
-previoustick                #TODO with match.fun!!
+previoustick,                #TODO with match.fun!!
+medianN                     #idem
 )
 
 #importFrom(mvtnorm, dmvnorm);
