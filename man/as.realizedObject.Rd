@@ -24,7 +24,7 @@ a realized object from the package "realized" by Scott Payseur.}
 data("sample_tdata");
 x = as.realizedObject(sample_tdata$PRICE);
 
-#multiple days: CHANGE DATASET PLEASE TO ONE WITH NONSYNCH PRICES..
+#multiple days:
 data("sample_5minprices");
 ts1 = sample_5minprices$stock1;
 #construct realized object:
