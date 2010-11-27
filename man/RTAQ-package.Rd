@@ -13,11 +13,11 @@ The Trades and Quotes data of the New York Stock Exchange is a popular input for
 Package: \tab RTAQ\cr
 Type: \tab Package\cr
 Version: \tab 0.1\cr
-Date: \tab 2010-04-10 \cr
 License: \tab GPL \cr
 LazyLoad: \tab yes \cr
 }
 }
+
 \author{
 Kris Boudt, Jonathan Cornelissen
 

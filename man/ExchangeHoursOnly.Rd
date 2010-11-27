@@ -29,7 +29,7 @@ xts object
 }
 \references{
 Brownlees, C.T. and Gallo, G.M. (2006). 
-Financial econometric analysis at ultra-high frequency: Data handling concerns,
+Financial econometric analysis at ultra-high frequency: Data handling concerns.
  Computational Statistics & Data Analysis, 51, pages 2232-2245.
 }
 
