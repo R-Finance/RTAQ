@@ -357,7 +357,10 @@ RTSCov = function (pdata,cor=FALSE, startIV=NULL, noisevar = NULL, K = 300, J = 
   #  if(hasArg(data)){ rdata = data }
   #  if(makeReturns){ rdata = makeReturns(rdata)}
 
-  if(!is.list(pdata)){ n = 1 }else{ n = length(pdata)}
+  if(!is.list(pdata)){ n = 1 }else{ 
+  n = length(pdata);
+  if(n==1){pdata=pdata[[1]];}
+  }
     
   if( n == 1 ){ return( RTSRV( pdata, startIV=startIV , noisevar = noisevar , K = K , J = J, eta = eta  ))}
   
@@ -467,7 +470,10 @@ TSCov = function (pdata,cor = FALSE, K = 300, J = 1, makePsd=FALSE)
   #  if(hasArg(data)){ rdata = data }
   #  if(makeReturns){ rdata = makeReturns(rdata)}
 
-  if(!is.list(pdata)){ n = 1 }else{ n = length(pdata)}
+  if(!is.list(pdata)){ n = 1 }else{ 
+  n = length(pdata);
+  if(n==1){pdata=pdata[[1]];}
+  }
     
   if( n == 1 ){ return( TSRV( pdata, K = K , J = J  ))}
   
