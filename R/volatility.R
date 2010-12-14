@@ -289,42 +289,52 @@ thresholdCov = function(rdata, cor=FALSE, makeReturns=FALSE,...)	{
 #  return(rcor);
 #}
 
-RTSRV = function ( pdata , startIV=NULL , noisevar = NULL , K = 300 , J = 1 , eta = 9) 
-{
-    logprices = log(as.numeric(pdata));
-    n = length(logprices) ;
-    nbarK = (n - K + 1)/(K) # average number of obs in 1 K-grid
+RTSRV = function (pdata, startIV = NULL, noisevar = NULL, K = 300, J = 1, eta = 9){
+    logprices = log(as.numeric(pdata))
+    n = length(logprices)
+    nbarK = (n - K + 1)/(K)
     nbarJ = (n - J + 1)/(J)
-    adj = (1 - (nbarK/nbarJ))^-1 
-    zeta = 1/pchisq( eta , 3 )
-    seconds =  as.numeric(as.POSIXct(index(pdata)));
-    secday = last(seconds) - first(seconds);
-    logreturns_K = vdelta_K = logreturns_J = vdelta_J = c();
-    for( k in 1:K){
-       sel =  seq(k,n,K)  
-       logreturns_K = c( logreturns_K , diff( logprices[sel] ) )
-       vdelta_K     = c( vdelta_K , diff( seconds[sel])/secday)
+    adj = (1 - (nbarK/nbarJ))^-1
+    zeta = 1/pchisq(eta, 3)
+    seconds = as.numeric(as.POSIXct(index(pdata)))
+    secday = last(seconds) - first(seconds)
+    logreturns_K = vdelta_K = logreturns_J = vdelta_J = c()
+    for (k in 1:K) {
+        sel = seq(k, n, K)
+        logreturns_K = c(logreturns_K, diff(logprices[sel]))
+        vdelta_K = c(vdelta_K, diff(seconds[sel])/secday)
     }
-    for( j in 1:J){
-       sel =  seq(j,n,J)  
-       logreturns_J = c( logreturns_J , diff( logprices[sel] ) )
-       vdelta_J     = c( vdelta_J , diff( seconds[sel])/secday)
+
+    for (j in 1:J) {
+        sel = seq(j, n, J)
+        logreturns_J = c(logreturns_J, diff(logprices[sel]))
+        vdelta_J = c(vdelta_J, diff(seconds[sel])/secday)
     }
-    if( is.null(noisevar) ){ 
-       logreturns_1 = diff( logprices )
-       noisevar = 1/(2*n)*( sum( logreturns_1^2 )-TSRV(pdata,K=K,J=J) ) 
+    if (is.null(noisevar)) {
+        logreturns_1 = diff(logprices)
+        noisevar = 1/(2 * n) * (sum(logreturns_1^2) - RTAQ:::TSRV(pdata, 
+            K = K, J = J))
     }
-    if(!is.null(startIV) ){ RTSRV = startIV }    
-    if( is.null(startIV) ){ RTSRV = (1/K) * MedRV(logreturns_K);}
-    iter=1;
-    while( iter <= 20 ){
-       I_K  = 1*( logreturns_K^2 <= eta*(RTSRV*vdelta_K+2*noisevar) )
-       I_J  = 1*( logreturns_J^2 <= eta*(RTSRV*vdelta_J+2*noisevar) )
-       RTSRV = adj * ( zeta*(1/K)*sum(logreturns_K^2*I_K)/mean(I_K) - 
-                       ((nbarK/nbarJ)*zeta*(1/J)*sum(logreturns_J^2*I_J)/mean(I_J)))
-       iter = iter + 1;
-   }
-   return(RTSRV)
+
+    if (!is.null(startIV)) {
+        RTSRV = startIV
+    }
+    if (is.null(startIV)) {
+        RTSRV = (1/K) * MedRV(logreturns_K)
+    }
+
+    iter = 1
+    while (iter <= 20) {
+        I_K = 1 * (logreturns_K^2 <= eta * (RTSRV * vdelta_K + 2 * noisevar))
+        I_J = 1 * (logreturns_J^2 <= eta * (RTSRV * vdelta_J + 2 * noisevar))
+    	   	if( sum(I_J)==0 ){I_J = rep(1,length(logreturns_J));}
+      		if( sum(I_K)==0 ){I_K = rep(1,length(logreturns_K));}
+        RTSRV = adj * (zeta * (1/K) * sum(logreturns_K^2 * I_K)/mean(I_K) - 
+            ((nbarK/nbarJ) * zeta * (1/J) * sum(logreturns_J^2 * 
+                I_J)/mean(I_J)))
+        iter = iter + 1
+    }
+    return(RTSRV)
 }
 
 
