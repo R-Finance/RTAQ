@@ -20,11 +20,11 @@ spotVol = function (pdata, dailyvol = "medrv" , periodicvol = "TML" , on = "minu
     M = ncol(mR);
     if( cDays == 1){
        mR = as.numeric(rdata)
-       estimdailyvol = switch( dailyvol , "bipower" = RBPVar(mR) , 
+       estimdailyvol = switch( dailyvol , "bipower" = RBPCov(mR) , 
                                           "medrv"   = MedRV(mR) ,
                                           "rv"      = RV(mR) ) 
     }else{
-       estimdailyvol = switch( dailyvol , "bipower" = apply(mR,1,'RBVar') , 
+       estimdailyvol = switch( dailyvol , "bipower" = apply(mR,1,'RBPCov') , 
                                           "medrv"   = apply(mR,1,'MedRV') ,
                                           "rv"      = apply(mR,1,'RV') ) 
     }
@@ -35,7 +35,7 @@ spotVol = function (pdata, dailyvol = "medrv" , periodicvol = "TML" , on = "minu
        mstdR = mR/estimdailyvol; 
        estimperiodicvol = diurnal( stddata = mstdR , method = periodicvol , dummies = dummies , P1 = P1 , P2 = P2 )[[1]]
        mfilteredR = mR/matrix( rep(estimperiodicvol,cDays) , byrow = T , nrow = cDays )
-       estimdailyvol = switch( dailyvol , "bipower" = apply(mfilteredR,1,'RBVar') , 
+       estimdailyvol = switch( dailyvol , "bipower" = apply(mfilteredR,1,'RBPCov') , 
                                           "medrv"   = apply(mfilteredR,1,'MedRV') ,
                                           "rv"      = apply(mfilteredR,1,'RV') )        
     }
