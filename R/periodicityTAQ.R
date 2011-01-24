@@ -115,6 +115,20 @@ diurnal = function( stddata , method="TML", dummies = F, P1 = 6 , P2 = 4)
         ADD = (vi^2/M2); X = cbind(X,ADD);
         if ( P2 > 0 ){ ADD= c(); for( j in 1:P2 ){  ADD = cbind( ADD , sin(2*pi*j*vi/intraT)  ) }}; X = cbind( X , ADD ) ; 
 
+        #openingeffect
+        opening = vi-0 ; stdopening = (vi-0)/80 ;
+        almond1_opening   = ( 1 - (stdopening)^3 );
+        almond2_opening   = ( 1 - (stdopening)^2 )*( opening);
+        almond3_opening   = ( 1 - (stdopening)   )*( opening^2);   
+        X = cbind(  X, almond1_opening , almond2_opening , almond3_opening   )  ;
+
+        #closing effect
+        closing = max(vi)-vi ; stdclosing = (max(vi)-vi)/max(vi) ;
+        almond1_closing   = ( 1 - (stdclosing)^3 );
+        almond2_closing   = ( 1 - (stdclosing)^2 )*( closing);
+        almond3_closing   = ( 1 - (stdclosing)   )*( closing^2);   
+        X = cbind(  X, almond1_closing , almond2_closing , almond3_closing   )  ;
+
      }else{ 
          for( d in 1:intraT){
            dummy = rep(0,intraT); dummy[d]=1; dummy = rep(dummy,each=cDays)
@@ -179,6 +193,21 @@ diurnalfit = function( theta , P1 , P2 , intraT , dummies=F )
         ADD = (vi/M1 ) ; X = cbind(X,ADD);
         ADD = (vi^2/M2); X = cbind(X,ADD);
         if ( P2 > 0 ){ ADD= c(); for( j in 1:P2 ){  ADD = cbind( ADD , sin(2*pi*j*vi/intraT)  ) }}; X = cbind( X , ADD ) ; 
+
+        #openingeffect
+        opening = vi-0 ; stdopening = (vi-0)/80 ;
+        almond1_opening   = ( 1 - (stdopening)^3 );
+        almond2_opening   = ( 1 - (stdopening)^2 )*( opening);
+        almond3_opening   = ( 1 - (stdopening)   )*( opening^2);   
+        X = cbind(  X, almond1_opening , almond2_opening , almond3_opening   )  ;
+
+        #closing effect
+        closing = max(vi)-vi ; stdclosing = (max(vi)-vi)/max(vi) ;
+        almond1_closing   = ( 1 - (stdclosing)^3 );
+        almond2_closing   = ( 1 - (stdclosing)^2 )*( closing);
+        almond3_closing   = ( 1 - (stdclosing)   )*( closing^2);   
+        X = cbind(  X, almond1_closing , almond2_closing , almond3_closing   )  ;
+
      }else{
         for( d in 1:intraT){
           dummy = rep(0,intraT); dummy[d]=1; 
@@ -191,18 +220,11 @@ diurnalfit = function( theta , P1 , P2 , intraT , dummies=F )
      return( seas )          
 }
 
-center = function()
-{
-    g=function(y){ return( sqrt(2/pi)*exp(y-exp(2*y)/2)  )}
-    f=function(y){ return( y*g(y)    )  }
-    return( integrate(f,-Inf,Inf)$value )
-}
-
 LeeMyklandCV = function( beta = 0.999 , M = 78 )
 {
     # Critical value for Lee-Mykland jump test statistic
     # Based on distribution of Maximum of M absolute normal random variables
-    a = function(n){ a1=sqrt(2*log(n)) ; a2= (log(pi)+log(log(n))  )/( 2*sqrt(2*log(n))   )   ; return(a1-a2)             };
+    a = function(n){ a1=sqrt(2*log(n)) ; a2= (log(pi)+log(log(n))  )/( 2*sqrt(2*log(n))   ); return(a1-a2)             };
     b = function(n){ return( 1/sqrt(2*log(n) )  ) ; return(b)} ;
     return( -log(-log(beta))*b(M) + a(M)     )
 }
