@@ -32,7 +32,7 @@ spotVol = function (pdata, dailyvol = "medrv" , periodicvol = "TML" , on = "minu
        print("Periodicity estimation requires at least 50 observations. Periodic component set to unity")
        estimperiodicvol = rep(1,M)
     }else{
-       mstdR = mR/estimdailyvol; 
+       mstdR = mR / sqrt( estimdailyvol*(1/M) ); 
        estimperiodicvol = diurnal( stddata = mstdR , method = periodicvol , dummies = dummies , P1 = P1 , P2 = P2 )[[1]]
        mfilteredR = mR/matrix( rep(estimperiodicvol,cDays) , byrow = T , nrow = cDays )
        estimdailyvol = switch( dailyvol , "bipower" = apply(mfilteredR,1,'RBPCov') , 
