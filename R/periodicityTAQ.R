@@ -40,8 +40,8 @@ spotVol = function (pdata, dailyvol = "medrv" , periodicvol = "TML" , on = "minu
                                           "rv"      = apply(mfilteredR,1,'RV') )        
     }
     out  = cbind( rdata ,
-                  rep( estimdailyvol,each=M)*rep(estimperiodicvol,cDays) ,
-                  rep( estimdailyvol,each=M) ,
+                  rep( sqrt( estimdailyvol*(1/M) ),each=M )*rep(estimperiodicvol,cDays) ,
+                  rep( sqrt( estimdailyvol*(1/M) ),each=M ) ,
                   rep(estimperiodicvol,cDays) )
     out = xts( out , order.by = time(rdata) )
     names(out) = c("returns","vol","dailyvol","periodicvol")
@@ -50,8 +50,6 @@ spotVol = function (pdata, dailyvol = "medrv" , periodicvol = "TML" , on = "minu
 
 
 # internal non documented functions: 
-
-
 HRweight = function( d,k){
 # Hard rejection weight function
    w = 1*(d<=k); return(w)
