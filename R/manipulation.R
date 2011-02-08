@@ -27,10 +27,10 @@ uniTAQload = function(ticker,from,to,trades=TRUE,quotes=FALSE,datasource=NULL,va
 
   if(trades){ tdata=NULL;
   for(i in 1:length(dates)){
-  datasourcex = paste(datasource,"\\",dates[i],sep="");
-  filename = paste(datasourcex,"\\",ticker,"_trades.RData",sep="");
+  datasourcex = paste(datasource,"/",dates[i],sep="");
+  filename = paste(datasourcex,"/",ticker,"_trades.RData",sep="");
 
-  ifmissingname = paste(datasourcex,"\\missing_",ticker,".RData",sep="");  
+  ifmissingname = paste(datasourcex,"/missing_",ticker,".RData",sep="");  
 
   if(file.exists(ifmissingname)){stop(paste("No trades available on ",dates[i],sep=""))}
   if(!file.exists(filename)){stop(paste("The file ",filename," does not exist. Please read the documentation.",sep=""))}
@@ -57,9 +57,9 @@ uniTAQload = function(ticker,from,to,trades=TRUE,quotes=FALSE,datasource=NULL,va
 
   if(quotes){ qdata=NULL;
   for(i in 1:length(dates)){
-  datasourcex = paste(datasource,"\\",dates[i],sep="");
-  filename = paste(datasourcex,"\\",ticker,"_quotes.RData",sep="");
-  ifmissingname = paste(datasourcex,"\\missingquotes_",ticker,".RData",sep="");
+  datasourcex = paste(datasource,"/",dates[i],sep="");
+  filename = paste(datasourcex,"/",ticker,"_quotes.RData",sep="");
+  ifmissingname = paste(datasourcex,"/missingquotes_",ticker,".RData",sep="");
   
   if(file.exists(ifmissingname)){stop(paste("no quotes available on ",dates[i],sep=""))}
   if(!file.exists(filename)){stop(paste("The file ",filename," does not exist. Please read the documentation.",sep=""))}

@@ -38,12 +38,12 @@ tradesCleanup = function(from,to,datasource,datadestination,ticker,exchanges,tda
   dates = dates[isBizday(dates, holidays = holidayNYSE(2004:2010))];
 
   for(j in 1:length(dates)){
-  datasourcex = paste(datasource,"\\",dates[j],sep="");
-  datadestinationx = paste(datadestination,"\\",dates[j],sep="");
+  datasourcex = paste(datasource,"/",dates[j],sep="");
+  datadestinationx = paste(datadestination,"/",dates[j],sep="");
 
   for(i in 1:length(ticker)){
   dataname = paste(ticker[i],"_trades.RData",sep="");
-  load(paste(datasourcex,"\\",dataname,sep=""));
+  load(paste(datasourcex,"/",dataname,sep=""));
 
   if(class(tdata)[1]!="try-error"){
   exchange = exchanges[i];  
@@ -59,12 +59,12 @@ tradesCleanup = function(from,to,datasource,datadestination,ticker,exchanges,tda
   tdata = try(salescond(tdata));   nresult[4] = nresult[4] + dim(tdata)[1];
   tdata = try(mergeTradesSameTimestamp(tdata,selection=selection));   nresult[5] = nresult[5] + dim(tdata)[1];
 
-  save(tdata, file = paste(datadestinationx,"\\",dataname,sep=""));
+  save(tdata, file = paste(datadestinationx,"/",dataname,sep=""));
   }
 
   if(class(tdata)=="try-error")	{
   abc=1;
-  save(abc, file = paste(datadestinationx,"\\missing_",ticker[i],".RData",sep=""));
+  save(abc, file = paste(datadestinationx,"/missing_",ticker[i],".RData",sep=""));
 						}
   }
   }
@@ -108,12 +108,12 @@ quotesCleanup = function(from,to,datasource,datadestination,ticker,exchanges, qd
   dates = dates[isBizday(dates, holidays = holidayNYSE(2004:2010))];
 
   for(j in 1:length(dates)){
-  datasourcex = paste(datasource,"\\",dates[j],sep="");
-  datadestinationx = paste(datadestination,"\\",dates[j],sep="");
+  datasourcex = paste(datasource,"/",dates[j],sep="");
+  datadestinationx = paste(datadestination,"/",dates[j],sep="");
 
   for(i in 1:length(ticker)){
   dataname = paste(ticker[i],"_quotes.RData",sep="");
-  load(paste(datasourcex,"\\",dataname,sep=""));
+  load(paste(datasourcex,"/",dataname,sep=""));
 
   if(class(qdata)[1]!="try-error"){
   exchange = exchanges[i];  
@@ -132,12 +132,12 @@ quotesCleanup = function(from,to,datasource,datadestination,ticker,exchanges, qd
   qdata = try(mergequotessametimestamp(qdata,selection=selection)); nresult[6] = nresult[6]+dim(qdata)[1];
   qdata = try(rmoutliers(qdata,maxi=rmoutliersmaxi,window=window,type=type)); nresult[7] = nresult[7]+dim(qdata)[1];
 
-  save(qdata, file = paste(datadestinationx,"\\",dataname,sep=""));
+  save(qdata, file = paste(datadestinationx,"/",dataname,sep=""));
   }
 
   if(class(qdata)=="try-error"){
   abc=1;
-  save(abc, file = paste(datadestinationx,"\\missingquotes_",ticker[i],".RData",sep=""));
+  save(abc, file = paste(datadestinationx,"/missingquotes_",ticker[i],".RData",sep=""));
   }
   }
   }
@@ -181,23 +181,23 @@ tradesCleanupFinal = function(from,to,datasource,datadestination,ticker,tdata=NU
   dates = dates[isBizday(dates, holidays = holidayNYSE(2004:2010))];
 
   for(j in 1:length(dates)){
-  datasourcex = paste(datasource,"\\",dates[j],sep="");
-  datadestinationx = paste(datadestination,"\\",dates[j],sep="");
+  datasourcex = paste(datasource,"/",dates[j],sep="");
+  datadestinationx = paste(datadestination,"/",dates[j],sep="");
 
   for(i in 1:length(ticker)){
   dataname = paste(ticker[i],"_trades.RData",sep="");
   dataname2 = paste(ticker[i],"_quotes.RData",sep="");
 
   #Missing file??
-  m1 = paste(datasourcex,"\\missing_",ticker[i],".RData",sep="");
-  m2 = paste(datasourcex,"\\missingquotes_",ticker[i],".RData",sep="");
+  m1 = paste(datasourcex,"/missing_",ticker[i],".RData",sep="");
+  m2 = paste(datasourcex,"/missingquotes_",ticker[i],".RData",sep="");
   miscondition = file.exists(m1)|file.exists(m1);
   a=FALSE;#check whether tried to clean
 
   if(!miscondition){
   #load trades and quotes
-  load(paste(datasourcex,"\\",dataname,sep=""));
-  load(paste(datasourcex,"\\",dataname2,sep=""));
+  load(paste(datasourcex,"/",dataname,sep=""));
+  load(paste(datasourcex,"/",dataname2,sep=""));
 
   tdata = dataformatc(tdata);
   qdata = dataformatc(qdata);
@@ -206,7 +206,7 @@ tradesCleanupFinal = function(from,to,datasource,datadestination,ticker,tdata=NU
   tdata = try(rmtradeoutliers(tdata,qdata));
 
   #save
-  save(tdata, file = paste(datadestinationx,"\\",dataname,sep=""));
+  save(tdata, file = paste(datadestinationx,"/",dataname,sep=""));
   a=TRUE;
 					}
 
@@ -214,7 +214,7 @@ tradesCleanupFinal = function(from,to,datasource,datadestination,ticker,tdata=NU
 
   if(miscondition|a)	{
   abc=1;
-  save(abc, file = paste(datadestinationx,"\\missing_",ticker[i],".RData",sep=""));
+  save(abc, file = paste(datadestinationx,"/missing_",ticker[i],".RData",sep=""));
 						}
   }
   }

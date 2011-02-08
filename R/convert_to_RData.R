@@ -37,14 +37,14 @@ convert = function(from,to,datasource,datadestination,trades=TRUE,quotes=TRUE,ti
   if(dir)	{
   dir.create(datadestination);
   for(i in 1:length(dates))	{
-  dirname = paste(datadestination,"\\",as.character(dates[i]),sep="")
+  dirname = paste(datadestination,"/",as.character(dates[i]),sep="")
   dir.create(dirname);
  					}			
 		}
 
   for(i in 1:length(dates)){
-  datasourcex = paste(datasource,"\\",dates[i],sep="");
-  datadestinationx = paste(datadestination,"\\",dates[i],sep="");
+  datasourcex = paste(datasource,"/",dates[i],sep="");
+  datadestinationx = paste(datadestination,"/",dates[i],sep="");
   if(trades==TRUE){convert_trades(datasourcex,datadestinationx,ticker,extention=extention,header=header,tradecolnames=tradecolnames,format=format)}
   if(quotes==TRUE){convert_quotes(datasourcex,datadestinationx,ticker,extention=extention,header=header,quotecolnames=quotecolnames,format=format)}
   }
@@ -65,7 +65,7 @@ convert_trades = function (datasource, datadestination, ticker, extention = "txt
         return(z)
     }
     for (i in 1:length(ticker)) {
-        tfile_name = paste(datasource, "\\", ticker[i], "_trades", 
+        tfile_name = paste(datasource, "/", ticker[i], "_trades", 
             sep = "")
         tdata = try(readdata(path = tfile_name, extention = extention, 
             header = header, dims = 9), silent = TRUE)
@@ -123,7 +123,7 @@ convert_quotes = function (datasource, datadestination, ticker, extention = "txt
         return(z)
     }
     for (i in 1:length(ticker)) {
-        qfile_name = paste(datasource, "\\", ticker[i], "_quotes", 
+        qfile_name = paste(datasource, "/", ticker[i], "_quotes", 
             sep = "")
         qdata = try(readdata(path = qfile_name, extention = extention, 
             header = header, dims = 9), silent = TRUE)
