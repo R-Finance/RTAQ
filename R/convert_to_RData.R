@@ -54,7 +54,10 @@ convert_trades = function (datasource, datadestination, ticker, extention = "txt
     header = FALSE, tradecolnames = NULL, format = "%m/%d/%Y %H:%M:%S") 
 {  
     missingt=matrix(ncol=2,nrow=0);
-
+   
+    suppressWarnings(dir.create(datadestination));
+    suppressWarnings(dir.create(datasource));
+    
     setwd(datasource)
     adjtime = function(z) {
         zz = unlist(strsplit(z, ":"))
@@ -112,6 +115,9 @@ convert_quotes = function (datasource, datadestination, ticker, extention = "txt
     header = FALSE, quotecolnames = NULL, format = "%m/%d/%Y %H:%M:%S") 
 {
     missingq=matrix(ncol=2,nrow=0);
+    
+    suppressWarnings(dir.create(datadestination));
+    suppressWarnings(dir.create(datasource));
     
     setwd(datasource)
     adjtime = function(z) {
