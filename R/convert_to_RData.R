@@ -29,7 +29,7 @@ return(data);
 }
 
 ############################
-convert = function(from,to,datasource,datadestination,trades=TRUE,quotes=TRUE,ticker,dir=FALSE,extention="txt",header=FALSE,tradecolnames=NULL,quotecolnames=NULL,format="%m/%d/%Y %H:%M:%S"){
+convert = function(from,to,datasource,datadestination,trades=TRUE,quotes=TRUE,ticker,dir=FALSE,extention="txt",header=FALSE,tradecolnames=NULL,quotecolnames=NULL,format="%Y%M%D %H:%M:%S"){
   dates = timeSequence(from,to, format = "%Y-%m-%d", FinCenter = "GMT")
   dates = dates[isBizday(dates, holidays = holidayNYSE(2004:2010))];
   missingt=missingq=matrix(ncol=2,nrow=0);
@@ -51,7 +51,7 @@ convert = function(from,to,datasource,datadestination,trades=TRUE,quotes=TRUE,ti
 }
 
 convert_trades = function (datasource, datadestination, ticker, extention = "txt", 
-    header = FALSE, tradecolnames = NULL, format = "%m/%d/%Y %H:%M:%S") 
+    header = FALSE, tradecolnames = NULL, format = "%Y%M%D %H:%M:%S") 
 {  
     missingt=matrix(ncol=2,nrow=0);
    
@@ -112,7 +112,7 @@ convert_trades = function (datasource, datadestination, ticker, extention = "txt
 
 
 convert_quotes = function (datasource, datadestination, ticker, extention = "txt", 
-    header = FALSE, quotecolnames = NULL, format = "%m/%d/%Y %H:%M:%S") 
+    header = FALSE, quotecolnames = NULL, format = "%Y%M%D %H:%M:%S") 
 {
     missingq=matrix(ncol=2,nrow=0);
     

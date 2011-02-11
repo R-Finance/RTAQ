@@ -15,7 +15,7 @@ Subsequently, the data can be loaded into the R console by \code{\link{TAQLoad}}
 convert(from,to,datasource,datadestination,trades=TRUE,quotes=TRUE,
         ticker,dir=FALSE,extention="txt",header=FALSE,
         tradecolnames=NULL,quotecolnames=NULL,
-        format="\%m/\%d/\%Y \%H:\%M:\%S")
+        format="%Y%M%D %H:%M:%S")
 }
 
 \arguments{
@@ -34,7 +34,7 @@ the standard NYSE data format is taken, see pdf documentation for more details.}
 \item{quotecolnames}{ vector containing column names of your quote data. By default, 
 the standard NYSE data format is taken, see pdf documentation for more details.}
 \item{format}{ character, indicates in what format TIME and DATE are recorded in the original data.
-By default, "\%m/\%d/\%Y \%H:\%M:\%S" is taken, which means the date is denoted by e.g. "01/30/2008" and the time by e.g. "09:30:00".}
+By default, "%Y%M%D %H:%M:%S" is taken, which means the date is denoted by e.g. "20080130" and the time by e.g. "09:30:00".}
 }
 
 \value{For each day an xts object is saved into the folder of that date, containing the converted data.
