@@ -2,7 +2,7 @@
 
 # Documented function:
 
-spotVol = function (pdata, dailyvol = "medrv" , periodicvol = "TML" , on = "minutes" , k = 5 , 
+spotVol = function (pdata, dailyvol = "bipower" , periodicvol = "TML" , on = "minutes" , k = 5 , 
            dummies = FALSE , P1 = 4 , P2 = 2, ...) 
 {
     dates = unique(format(time(pdata),"%Y-%m-%d"))
@@ -227,5 +227,11 @@ LeeMyklandCV = function( beta = 0.999 , M = 78 )
     return( -log(-log(beta))*b(M) + a(M)     )
 }
 
+center = function()
+{
+    g=function(y){ return( sqrt(2/pi)*exp(y-exp(2*y)/2)  )}
+    f=function(y){ return( y*g(y)    )  }
+    return( integrate(f,-Inf,Inf)$value )
+}
 
 

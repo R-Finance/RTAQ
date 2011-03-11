@@ -27,7 +27,7 @@ For the jump robust versions, see Boudt et al. (2010).
 
 \usage{
 spotVol(pdata, 
-    dailyvol = "medrv", 
+    dailyvol = "bipower", 
     periodicvol = "TML",
     on = "minutes",
     k   = 5,
@@ -82,8 +82,6 @@ Journal of Empirical Finance 4, 317-340.
 data("sample_real5minprices");
 
 #compute and plot intraday periodicity
-par(mfrow =c(2,1));
-out = spotVol(price,P1=6,P2=4,method="OLS",k=5, dummies=TRUE);
 out = spotVol(price,P1=6,P2=4,method="OLS",k=5, dummies=FALSE);
 head(out);
 }
