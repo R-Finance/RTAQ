@@ -22,20 +22,12 @@ called the weighted standard deviation. For regression, choose OLS for the class
 robust regression. The regression specification consists either of one dummy for each intraday period (dummies=TRUE) or the flexible fourrier
 form with P1 cosinus and P2 sinus terms. For more details on the classical methods, see Taylor and Xu (1997) and Andersen et al. (1997). 
 For the jump robust versions, see Boudt et al. (2010).  
-
 }
 
 \usage{
-spotVol(pdata, 
-    dailyvol = "bipower", 
-    periodicvol = "TML",
-    on = "minutes",
-    k   = 5,
-    dummies = FALSE , 
-    P1 = 4, 
-    P2 = 2, 
-       ...)
-}
+spotVol(pdata, dailyvol = "bipower", periodicvol = "TML", 
+    on = "minutes", k = 5, dummies = FALSE, P1 = 4, P2 = 2,  
+    marketopen = "09:30:00", marketclose = "16:00:00")}
 
 \arguments{
   \item{pdata}{xts object, containing the price series.}
@@ -50,7 +42,8 @@ spotVol(pdata,
    If it false, the parametric estimator uses the Flexible Fourrier specification. FALSE by default.}
    \item{P1}{ is a positive integer valued parameter that corresponds to the number of cosinus terms used in the flexible fourrier specification for the periodicity function, see Andersen et al. (1997) for details.}
    \item{P2}{ is a positive integer valued parameter that corresponds to the number of sinus terms used in the flexible fourrier specification for the periodicity function, see Andersen et al. (1997) for details.}
-   \item{...}{additional arguments}
+   \item{marketopen}{the market opening time, by default: marketopen = "09:30:00".}
+   \item{marketclose}{the market closing time, by default: marketclose = "16:00:00".} 
 }
 
 \details{
@@ -82,10 +75,9 @@ Journal of Empirical Finance 4, 317-340.
 data("sample_real5minprices");
 
 #compute and plot intraday periodicity
-out = spotVol(price,P1=6,P2=4,method="OLS",k=5, dummies=FALSE);
+out = spotVol(price,P1=6,P2=4,periodicvol="TML",k=5, dummies=FALSE);
 head(out);
 }
-
 
 \keyword{ volatility}
 
