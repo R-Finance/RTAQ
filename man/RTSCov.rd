@@ -88,7 +88,7 @@ matrix. This function replaces the negative eigenvalues with zeroes.
 }
 
 \references{
-Boudt K. and Zhang, J. 2010. Jump robust two time scale covariance estimation and realized volatility budgets.
+Boudt K. and Zhang, J. 2010. Jump robust two time scale covariance estimation and realized volatility budgets. Mimeo.
 
 Harris, F., T. McInish, G. Shoesmith, and R. Wood (1995). Cointegration, error
 correction, and price discovery on infomationally linked security markets. Journal

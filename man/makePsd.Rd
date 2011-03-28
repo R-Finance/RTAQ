@@ -39,7 +39,7 @@ Barndorff-Nielsen, O. and N. Shephard (2004). Measuring the impact of
 jumps in multivariate price processes using bipower covariation. Discussion
 paper, Nuffield College, Oxford University.
 
-Fan, J., Y. Li, and K. Yu (2010). Vast volatility matrix estimation using high frequency data for portfolio selection.
+Fan, J., Y. Li, and K. Yu (2010). Vast volatility matrix estimation using high frequency data for portfolio selection. Working paper.
 
 Rousseeuw, P. and G. Molenberghs (1993). Transformation of non positive semidefinite correlation matrices. Communications in Statistics - Theory and Methods 22, 965-984.
 }

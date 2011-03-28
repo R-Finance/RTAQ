@@ -64,8 +64,8 @@ estimation using nearest neighbor truncation. NBER Working Paper No.
 Barndorff-Nielsen, O. and N. Shephard (2004). Power and bipower variation with 
 stochastic volatility and jumps. Journal of Financial Econometrics 2 (1), 1-37.
 
-Boudt K., C. Croux C. and S. Laurent (2010).  Robust estimation of intraweek periodicity in volatility 
-and jump detection. Journal of Empirical Finance, forthcoming. 
+Robust estimation of intraweek periodicity in volatility and jump detection. 
+Journal of Empirical Finance 18, 353-367
 
 Taylor, S. J. and X. Xu (1997). The incremental volatility information in one million foreign exchange quotations. 
 Journal of Empirical Finance 4, 317-340.
