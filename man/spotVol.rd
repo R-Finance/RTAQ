@@ -51,8 +51,6 @@ Returns an xts object with first column equal to the high-frequency return serie
 the daily volatility factor and, finally, the fourth column is the periodic component. 
 }
 
-
-
 \references{
 Andersen, T. G. and T. Bollerslev (1997). Intraday periodicity and volatility persistence in financial markets. 
 Journal of Empirical Finance 4, 115-158.
@@ -75,13 +73,14 @@ Journal of Empirical Finance 4, 317-340.
 data("sample_real5minprices");
 
 #compute and plot intraday periodicity
-out = spotVol(price,P1=6,P2=4,periodicvol="TML",k=5, dummies=FALSE);
+out = spotVol(sample_real5minprices,P1=6,P2=4,periodicvol="TML",k=5, 
+dummies=FALSE);
 head(out);
 }
 
-\keyword{ volatility}
+\keyword{volatility}
 
-\author{ Jonathan Cornelissen and Kris Boudt}
+\author{Jonathan Cornelissen and Kris Boudt}
 
 %cd C:\package\TradeAnalytics\pkg\RTAQ\man
 %R CMD Rdconv --type=html --output=sample_5minprices.htm sample_5minprices.Rd

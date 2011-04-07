@@ -25,11 +25,11 @@ data = dataformatc(data);
   gettime = function(z){unlist(strsplit(as.character(z)," "))[2]};
   times1 = as.matrix(as.vector(as.character(index(data))));
   times = apply(times1,1,gettime); 
-  tdtimes = timeDate(times,format = "%H:%M:%S",FinCenter = "GMT",zone="GMT");
+  tdtimes = timeDate:::timeDate(times,format = "%H:%M:%S",FinCenter = "GMT",zone="GMT");
 
   #create timeDate begin and end
-  tddaybegin = timeDate(daybegin,format = "%H:%M:%S",FinCenter = "GMT",zone="GMT");
-  tddayend = timeDate(dayend,format = "%H:%M:%S",FinCenter = "GMT",zone="GMT");
+  tddaybegin = timeDate:::timeDate(daybegin,format = "%H:%M:%S",FinCenter = "GMT",zone="GMT");
+  tddayend = timeDate:::timeDate(dayend,format = "%H:%M:%S",FinCenter = "GMT",zone="GMT");
 
   #select correct observations
   filteredts = data[tdtimes>=tddaybegin & tdtimes<=tddayend];

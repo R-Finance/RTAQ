@@ -6,6 +6,6 @@ Author: Kris Boudt, Jonathan Cornelissen
 Maintainer: Jonathan Cornelissen <Jonathan.cornelissen@econ.kuleuven.be>
 Description: The Trades and Quotes data of the New York Stock Exchange is a popular input for the implementation of intraday trading strategies, the measurement of liquidity and volatility and investigation of the market microstructure, among others. This package contains a collection of R functions to carefully clean and match the trades and quotes data, calculate ex post liquidity and volatility measures and detect price jumps in the data.
 Depends: xts, timeDate
-Suggests: realized, robustbase, cubature, mvtnorm
+Suggests: realized, robustbase, cubature, mvtnorm, chron
 License: GPL
 LazyLoad: yes

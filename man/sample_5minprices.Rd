@@ -22,4 +22,4 @@ Barndorff-Nielsen, O. E., P. R. Hansen, A. Lunde and N. Shephard (2009).
 Multivariate realised kernels: consistent positive semi-definite
 estimators of the covariation of equity prices with noise and non-synchronous
 trading. Journal of Econometrics, forthcoming.}
-\keyword{datasets}
+\keyword{datasets}          

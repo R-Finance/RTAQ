@@ -96,7 +96,7 @@ convert_trades = function (datasource, datadestination, ticker, extention = "txt
             newtime = apply(oldtime, 1, adjtime)
             tdata$TIME = newtime
             rm(oldtime, newtime)
-            tdobject = timeDate(paste(as.vector(tdata$DATE), 
+            tdobject = timeDate:::timeDate(paste(as.vector(tdata$DATE), 
                 as.vector(tdata$TIME)), format = format, FinCenter = "GMT", 
                 zone = "GMT")
             tdata = xts(tdata, order.by = tdobject)
@@ -153,9 +153,9 @@ convert_quotes = function (datasource, datadestination, ticker, extention = "txt
             qdata$TIME = newtime
             rm(oldtime, newtime)
             test = paste(as.vector(qdata$DATE), as.vector(qdata$TIME))
-            tdobject = timeDate(test, format = format, FinCenter = "GMT", 
+            tdobject = timeDate:::timeDate(test, format = format, FinCenter = "GMT", 
                 zone = "GMT")
-            tdobject = timeDate(test, format = format, FinCenter = "GMT", 
+            tdobject = timeDate:::timeDate(test, format = format, FinCenter = "GMT", 
                 zone = "GMT")
             qdata = xts(qdata, order.by = tdobject)
             qdata = qdata[, c("SYMBOL", "EX", "BID", "BIDSIZ", 

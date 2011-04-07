@@ -62,9 +62,9 @@ makeReturns,
 #tspread, pts, p_return_sqr, p_return_abs, qs, pqs,  
 #logqs, logsize, qslope, logqslope, mq_return_sqr, mq_return_abs,
 #rest :
-spotVol, 
-sumN,                       #TODO with match.fun!!
-previoustick,                #TODO with match.fun!!
+spotVol,
+sumN,                       #previously included...
+previoustick,               #idem
 medianN                     #idem
 )
 

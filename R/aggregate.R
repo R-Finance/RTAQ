@@ -21,8 +21,6 @@ period.apply2 = function (x, INDEX, FUN2, ...)
     reclass(xx, x[INDEX])
 }
 
-
-
 ## AGGREGATION;
 aggregatets = function (ts, FUN = "previoustick", on = "minutes", k = 1, weights = NULL,dropna=FALSE) 
 {
@@ -113,6 +111,7 @@ aggregatets = function (ts, FUN = "previoustick", on = "minutes", k = 1, weights
 
 aggregatePrice = function (ts, FUN = "previoustick", on = "minutes", k = 1,marketopen="09:30:00",marketclose = "16:00:00") 
 {
+
     ts = dataformatc(ts)
     ts2 = aggregatets(ts, FUN = FUN, on, k)
     date = strsplit(as.character(index(ts)), " ")[[1]][1]
@@ -135,6 +134,7 @@ aggregatePrice = function (ts, FUN = "previoustick", on = "minutes", k = 1,marke
 #VOLUME: (specificity: always sum)
 agg_volume= function(ts, FUN = "sumN", on = "minutes", k = 5, includeopen = FALSE,marketopen="09:30:00",marketclose="16:00:00") 
 {
+
     ts = dataformatc(ts)
     if (!includeopen) {
         ts3 = aggregatets(ts, FUN = FUN, on, k)

@@ -107,8 +107,8 @@ tdatacheck(tdata);
   merged[,((tt+1):dim(merged)[2])] = na.locf(as.zoo(merged[,((tt+1):dim(merged)[2])]), na.rm=FALSE);
 
   #Select trades:
-  index(tdata)=as.POSIXct(index(tdata));
-  index(merged)=as.POSIXct(index(merged));  
+  index(tdata)=  as.POSIXct(index(tdata));
+  index(merged)= as.POSIXct(index(merged));  
   merged = merged[index(tdata)];
 
   #return useful parts:
@@ -296,7 +296,7 @@ data = dataformatc(data);
   offer = as.numeric(data$OFR);
   midpoints = (bid + offer)/2;
 
-  pes = 100*es/midpoints
+  pes = es/midpoints
   pes_xts = xts(pes,order.by=index(data));
   return(pes_xts);
 }
@@ -308,7 +308,7 @@ data = dataformatc(data);
   bid = as.numeric(data$BID);
   offer = as.numeric(data$OFR);
   midpoints = (bid + offer)/2;
-  prs = 100*rs/midpoints
+  prs = rs/midpoints
   prs_xts = xts(prs,order.by=index(data));
   return(prs_xts);
 }
@@ -333,7 +333,7 @@ data = dataformatc(data);
   offer = as.numeric(data$OFR);
   midpoints = (bid + offer)/2;
 
-  prop_pi = (100*(es-rs)/2)/midpoints;
+  prop_pi = ((es-rs)/2)/midpoints;
   prop_pi_xts = xts(prop_pi,order.by=index(data));
   return(prop_pi_xts);
 }
@@ -394,7 +394,7 @@ data = dataformatc(data);
   offer = as.numeric(data$OFR);
   midpoints = (bid + offer)/2;
   qs = offer-bid;
-  pqs = 100*qs/midpoints;
+  pqs = qs/midpoints;
 
   pqs_xts = xts(pqs,order.by=index(data));
   return(pqs_xts);

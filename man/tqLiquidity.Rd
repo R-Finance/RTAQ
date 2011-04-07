@@ -106,7 +106,7 @@ Note that the input of this function consists of the matched trades and quotes,
  
 \item{prop_price_impact: proportional price impact}{
 \deqn{
-\mbox{proportional price impact}_t =  \frac{100*\frac{(\mbox{effective spread}_t - \mbox{realized spread}_t)}{2}}{\frac{\mbox{OFR}_{t}+\mbox{BID}_{t}}{2}}
+\mbox{proportional price impact}_t =  \frac{\frac{(\mbox{effective spread}_t - \mbox{realized spread}_t)}{2}}{\frac{\mbox{OFR}_{t}+\mbox{BID}_{t}}{2}}
 }
 (Venkataraman, 2001).
 Note that the input of this function consists of the matched trades and
