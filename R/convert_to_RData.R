@@ -31,8 +31,8 @@ return(data);
 ############################
 convert = function(from,to,datasource,datadestination,trades=TRUE,quotes=TRUE,ticker,dir=FALSE,extention="txt",header=FALSE,tradecolnames=NULL,quotecolnames=NULL,format="%Y%M%D %H:%M:%S"){
   dates = timeSequence(from,to, format = "%Y-%m-%d", FinCenter = "GMT")
-  dates = dates[isBizday(dates, holidays = holidayNYSE(2004:2010))];
-  missingt=missingq=matrix(ncol=2,nrow=0);
+  dates = dates[isBizday(dates, holidays = holidayNYSE(1950:2030))];
+  missingt = missingq = matrix(ncol=2,nrow=0);
 
   if(dir)	{
   dir.create(datadestination);
