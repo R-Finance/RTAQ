@@ -56,7 +56,8 @@ to = "2008-01-03";
 convert(from,to,datasource,datadestination,trades=TRUE,
           quotes=FALSE,ticker=c("AA","AAPL"),dir=FALSE,extention="txt",
           header=FALSE,tradecolnames=NULL,quotecolnames=NULL,
-          format="%m/%d/%Y %H:%M:%S")
+          format="\%Y\%m\%d \%H:\%M:\%S");
+
 #Now, the folder datadestination will contain two folders
 #named 2008-01-02 and 2008-01-03 containing 
 #the files AAPL_trades.RData and AAPL_trades.RData containing the trades.
