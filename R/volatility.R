@@ -88,26 +88,37 @@ return(medrv)
 
 ##Multivariate measures:
 #Realized Covariation (RCov):
-RCov = function(rdata,cor=FALSE, makeReturns = FALSE, ...){
-  if(hasArg(data)){ rdata = data }
-  
-  if(makeReturns){ rdata = makeReturns(rdata)}
-  
-  if(is.null(dim(rdata))){ n=1 }else{ n = dim(rdata)[2]}
+RCov = function (rdata, cor = FALSE, makeReturns = FALSE, ...) 
+{
+    if (hasArg(data)) {
+        rdata = data
+    }
+    if (makeReturns) {
+        rdata = makeReturns(rdata)
+    }
+    if (is.null(dim(rdata))) {
+        n = 1
+    }
+    else {
+        n = dim(rdata)[2]
+    }
+    if (n == 1) {
+        return(RV(rdata))
+    }
+    if (n > 1) {
+#        rdata = na.locf(rdata, na.rm = FALSE)
 
-  if( n == 1 ){ return( RV( rdata ))}
-  
-  if( n > 1 ){ 
-  rdata = na.locf(rdata,na.rm=FALSE);
-  rdata = as.matrix(rdata);
-  covariance = t(rdata)%*%rdata;
-  if(cor==FALSE){return(covariance)}
-  if(cor==TRUE){
-  sdmatrix = sqrt(diag(diag(covariance)));
-  rcor = solve(sdmatrix)%*%covariance%*%solve(sdmatrix);
-  return(rcor)
-  }
-  }
+        rdata = as.matrix(rdata)
+        covariance = t(rdata) %*% rdata
+        if (cor == FALSE) {
+            return(covariance)
+        }
+        if (cor == TRUE) {
+            sdmatrix = sqrt(diag(diag(covariance)))
+            rcor = solve(sdmatrix) %*% covariance %*% solve(sdmatrix)
+            return(rcor)
+        }
+    }
 }
 
 #Realized Outlyingness Weighted Quadratic Covariation (ROWQCov)
