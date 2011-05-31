@@ -1,12 +1,13 @@
 \name{aggregatets}
 \Rdversion{1.1}
 \alias{aggregatets}
-\title{
-Aggregate a time series}
+\title{Aggregate a time series}
 
 \description{
 Function returns aggregated time series as xts object. 
 It can handle irregularly spaced timeseries and returns a regularly spaced one.
+Use univariate timeseries as input for this function, and check out \code{\link{aggregateTrades}}
+and \code{\link{aggregateQuotes}} to aggregate Trade or Quote data objects.
 }
 
 \usage{

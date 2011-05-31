@@ -66,6 +66,8 @@ spotVol,
 sumN,                       #previously included...
 previoustick,               #idem
 medianN                     #idem
+#waverage,                    #new 
+#maxvol                       #new
 )
 
 #importFrom(mvtnorm, dmvnorm);

@@ -6,6 +6,20 @@ adjtime = function(z){
   return(paste(paste(0,zz[1],sep=""),zz[2],zz[3],sep=":"))}
   return(z);
   }
+  
+  period.apply3 = function (x, INDEX, FUN, ...) 
+{
+#small adaptation of the xts - function which experiences some troubles in multidimensional setting
+    x <- try.xts(x, error = FALSE)
+    FUN <- match.fun(FUN)
+    xx <- sapply(1:(length(INDEX) - 1), function(y) {
+        FUN(x[(INDEX[y] + 1):INDEX[y + 1]], ...)
+    })
+    if (is.vector(xx)) 
+        xx <- t(xx)
+    xx <- t(xx)
+    reclass(xx, x[INDEX])
+}
 
 ########## DATA CLEAN-UP: FOR ALL DATA #####################
 
@@ -132,27 +146,28 @@ waverage = function(a){
   return(b);
 }
 
-mergeTradesSameTimestamp = function(tdata,selection="median"){
-tdata = dataformatc(tdata);
-tdatacheck(tdata);
-  #find end points:
-  ep = endpoints(tdata,"secs");
-
-  #size per second:
-  size = period.apply(tdata$SIZE,ep,sumN);
-
-  #price per second:
-  if(selection=="median"){price = period.apply(tdata$PRICE,ep,medianN)}
-  if(selection=="maxvolume"){price = period.apply(cbind(tdata$PRICE,tdata$SIZE),ep,maxvol)}
-  if(selection=="weightedaverage"){price = period.apply(cbind(tdata$PRICE,tdata$SIZE),ep,waverage)}
-
-  ##merge everything:
-  selection = ep[2:length(ep)];
-  tdata2 = tdata[selection];
-  tdata2$PRICE = price;
-  tdata2$SIZE = size;
-
-return(tdata2)
+mergeTradesSameTimestamp = function (tdata, selection = "median") 
+{
+    tdata = dataformatc(tdata)
+    tdatacheck(tdata)
+    ep = endpoints(tdata, "secs")
+    size = period.apply(tdata$SIZE, ep, sumN)
+    if (selection == "median") {
+        price = period.apply3(tdata$PRICE, ep, medianN)
+    }
+    if (selection == "maxvolume") {
+        price = period.apply3(cbind(tdata$PRICE, tdata$SIZE), 
+            ep, maxvol)
+    }
+    if (selection == "weightedaverage") {
+        price = period.apply3(cbind(tdata$PRICE, tdata$SIZE), 
+            ep, waverage)
+    }
+    selection = ep[2:length(ep)]
+    tdata2 = tdata[selection]
+    tdata2$PRICE = price
+    tdata2$SIZE = size
+    return(tdata2)
 }
 
 rmTradeOutliers = function(tdata,qdata){
@@ -223,46 +238,42 @@ qdatacheck(qdata);
 }
 
 
-mergeQuotesSameTimestamp = function(qdata,selection="median"){  ##FAST
-qdata = dataformatc(qdata);
-qdatacheck(qdata);
-  condition=selection=="median"|selection=="maxvolume"|selection=="weightedaverage";
-  if(!condition){print(paste("WARNING:The result will be corrupted. Check whether",selection,"is an existing option for the attribute selection."))}
-
-  #find end points:
-  ep = endpoints(qdata,"secs");
-
-  #size per second:
-  bidsize = period.apply(qdata$BIDSIZ,ep,sumN);
-  offersize =  period.apply(qdata$OFRSIZ,ep,sumN);
-
-  #median per second:
-  if(selection=="median"){
-  bid = period.apply(qdata$BID,ep,medianN);
-  offer = period.apply(qdata$OFR,ep,medianN);
-  }
-
-  #maxvolume per second:
-  if(selection=="maxvolume"){
-  bid = period.apply(cbind(qdata$BID,qdata$BIDSIZ),ep,maxvol);
-  offer = period.apply(cbind(qdata$OFR,qdata$OFRSIZ),ep,maxvol);
-  }
-
-  if(selection=="weightedaverage"){
-  bid = period.apply(cbind(qdata$BID,qdata$BIDSIZ),ep,waverage);
-  offer = period.apply(cbind(qdata$OFR,qdata$OFRSIZ),ep,waverage);
-  }
-
-  ##merge everything:
-  selection = ep[2:length(ep)];
-  ts2 = qdata[selection];
-  ts2$BID = bid;
-  ts2$OFR = offer;
-
-  ts2$BIDSIZ = bidsize;
-  ts2$OFRSIZ = offersize;
-
-return(ts2)
+mergeQuotesSameTimestamp = function (qdata, selection = "median") 
+{
+    qdata = dataformatc(qdata)
+    qdatacheck(qdata)
+    condition = selection == "median" | selection == "maxvolume" | 
+        selection == "weightedaverage"
+    if (!condition) {
+        print(paste("WARNING:The result will be corrupted. Check whether", 
+            selection, "is an existing option for the attribute selection."))
+    }
+    ep = endpoints(qdata, "secs")
+    bidsize = period.apply(qdata$BIDSIZ, ep, sumN)
+    offersize = period.apply(qdata$OFRSIZ, ep, sumN)
+    if (selection == "median") {
+        bid = period.apply(qdata$BID, ep, medianN)
+        offer = period.apply(qdata$OFR, ep, medianN)
+    }
+    if (selection == "maxvolume") {
+        bid = period.apply3(cbind(qdata$BID, qdata$BIDSIZ), ep, 
+            maxvol)
+        offer = period.apply3(cbind(qdata$OFR, qdata$OFRSIZ), 
+            ep, maxvol)
+    }
+    if (selection == "weightedaverage") {
+        bid = period.apply3(cbind(qdata$BID, qdata$BIDSIZ), ep, 
+            waverage)
+        offer = period.apply3(cbind(qdata$OFR, qdata$OFRSIZ), 
+            ep, waverage)
+    }
+    selection = ep[2:length(ep)]
+    ts2 = qdata[selection]
+    ts2$BID = bid
+    ts2$OFR = offer
+    ts2$BIDSIZ = bidsize
+    ts2$OFRSIZ = offersize
+    return(ts2)
 }
 
 
