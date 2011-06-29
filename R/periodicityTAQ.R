@@ -112,8 +112,8 @@ function (stddata, method = "TML", dummies = F, P1 = 6, P2 = 4)
             seas[c] = WSDnozero(weights[, c], stddata[, c])
         }
     }
-    # new: 
-    seas = na.locf(seas)
+    seas = na.locf(seas,na.rm=F) #do not remove leading NA
+    seas = na.locf(seas,fromLast=T)
     seas = seas/sqrt(mean(seas^2))
     if (method == "OLS" | method == "TML") {
         c = center()
