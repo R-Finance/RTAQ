@@ -66,9 +66,3 @@ thresholdBPCov = function (rdata, startIV = NULL, eta = 9, cor=FALSE, makeReturn
   return(rcor)}
 }  
   
-  
-  
-  
-}
-
-rdata, cor=FALSE, makeReturns=FALSE,...
