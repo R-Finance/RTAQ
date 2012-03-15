@@ -15,7 +15,8 @@ is not only robust to price jumps, but also to microstructure noise and non-sync
 
 \usage{
 RTSCov(pdata, cor=FALSE, startIV=NULL, noisevar = NULL, 
-       K = 300 , J = 1,  eta = 9, makePsd = FALSE)
+       K = 300 , J = 1, K_cov = NULL , J_cov = NULL,
+        K_var = NULL , J_var = NULL, eta = 9, makePsd = FALSE)
 }
  
 \arguments{
@@ -27,6 +28,11 @@ of stock i for day t.}
 \item{noisevar}{ vector containing the estimates of the noise variance of the assets, needed in the truncation. Is NULL by default.}
 \item{K}{positive integer, slow time scale returns are computed on prices that are K steps apart.}
 \item{J}{positive integer, fast time scale returns are computed on prices that are J steps apart.}
+\item{K_cov}{positive integer, for the extradiagonal covariance elements the slow time scale returns are computed on prices that are K steps apart.}
+\item{J_cov}{positive integer, for the extradiagonal covariance elements the fast time scale returns are computed on prices that are J steps apart.}
+\item{K_var}{vector of positive integers, for the diagonal variance elements the slow time scale returns are computed on prices that are K steps apart.}
+\item{J_var}{vector of positive integers, for the diagonal variance elements the fast time scale returns are computed on prices that are J steps apart.}
+\item{makePsd}{ boolean, in case it is TRUE, the positive definite version of RTSCov is returned. FALSE by default.}
 \item{eta}{positive real number, squared standardized high-frequency returns that exceed eta are detected as jumps.}
 \item{makePsd}{ boolean, in case it is TRUE, the positive definite version of RTSCov is returned. FALSE by default.}
 }

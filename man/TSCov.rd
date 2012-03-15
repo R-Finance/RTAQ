@@ -13,7 +13,8 @@ is robust to microstructure noise and non-synchronic trading.
 
 
 \usage{
-TSCov(pdata, cor=FALSE, K = 300 , J = 1,  makePsd = FALSE);
+TSCov(pdata, cor=FALSE, K = 300 , J = 1,  K_cov = NULL , J_cov = NULL,
+    K_var = NULL , J_var = NULL, makePsd = FALSE);
 }
  
 \arguments{
@@ -22,6 +23,10 @@ of stock i for day t.}
 \item{cor}{ boolean, in case it is TRUE, the correlation is returned. FALSE by default.}
 \item{K}{positive integer, slow time scale returns are computed on prices that are K steps apart.}
 \item{J}{positive integer, fast time scale returns are computed on prices that are J steps apart.}
+\item{K_cov}{positive integer, for the extradiagonal covariance elements the slow time scale returns are computed on prices that are K steps apart.}
+\item{J_cov}{positive integer, for the extradiagonal covariance elements the fast time scale returns are computed on prices that are J steps apart.}
+\item{K_var}{vector of positive integers, for the diagonal variance elements the slow time scale returns are computed on prices that are K steps apart.}
+\item{J_var}{vector of positive integers, for the diagonal variance elements the fast time scale returns are computed on prices that are J steps apart.}
 \item{makePsd}{ boolean, in case it is TRUE, the positive definite version of RTSCov is returned. FALSE by default.}
 }
 
