@@ -322,7 +322,7 @@ RTSRV = function (pdata, startIV = NULL, noisevar = NULL, K = 300, J = 1,
         vdelta_J = c(vdelta_J, diff(seconds[sel])/secday)
     }
     if (is.null(noisevar)) {
-        noisevar = max(0,1/(2 * nbarJ) * (sum(logreturns_J^2)/J - RTAQ:::TSRV(pdata1,K=K,J=J)))        
+        noisevar = max(0,1/(2 * nbarJ) * (sum(logreturns_J^2)/J - TSRV(pdata1,K=K,J=J)))        
     }
     if (!is.null(startIV)) {
         RTSRV = startIV
@@ -391,7 +391,7 @@ RTSCov = function (pdata, cor = FALSE, startIV = NULL, noisevar = NULL,
         }
     }
     if (n == 1) {
-        return(RTAQ:::RTSRV(pdata, startIV = startIV, noisevar = noisevar, 
+        return(RTSRV(pdata, startIV = startIV, noisevar = noisevar, 
             K = K, J = J, eta = eta))
     }
     if (n > 1) {
@@ -400,11 +400,11 @@ RTSCov = function (pdata, cor = FALSE, startIV = NULL, noisevar = NULL,
         if( is.null(K_cov)){ K_cov = K }
         if( is.null(J_cov)){ J_cov = J }  
         if( is.null(K_var)){ K_var = rep(K,n) }
-        if( is.null(J_var)){ J_var = rep(J_var,n) }        
+        if( is.null(J_var)){ J_var = rep(J,n) }        
         for (i in 1:n) {
-            diagonal[i] = RTAQ:::RTSRV(pdata[[i]], startIV = startIV[i], 
+            diagonal[i] = RTSRV(pdata[[i]], startIV = startIV[i], 
                 noisevar = noisevar[i], K = K_var[i], J = J_var[i], 
-                K_cov = K_cov , J_cov = J_cov , eta = eta)
+                 eta = eta)
         }
         diag(cov) = diagonal
         if( is.null(K_cov)){ K_cov = K }
@@ -414,7 +414,7 @@ RTSCov = function (pdata, cor = FALSE, startIV = NULL, noisevar = NULL,
                 cov[i, j] = cov[j, i] = RTSCov_bi(pdata[[i]], 
                   pdata[[j]], startIV1 = diagonal[i], startIV2 = diagonal[j], 
                   noisevar1 = noisevar[i], noisevar2 = noisevar[j], 
-                  K = K, J = J, eta = eta)
+                  K = K_cov, J = J_cov, eta = eta)
             }
         }
         if (cor == FALSE) {
@@ -469,7 +469,7 @@ function (pdata1, pdata2, startIV1 = NULL, startIV2 = NULL, noisevar1 = NULL,
            logreturns_J1 = c(logreturns_J1, diff(logprices1[sel.avg]))
         }   
         if(  is.null(noisevar1)  ){
-           noisevar1 = max(0,1/(2 * nbarJ_var1) * (sum(logreturns_J1^2)/J_var1 - RTAQ:::TSRV(pdata1,K=K_var1,J=J_var1)))
+           noisevar1 = max(0,1/(2 * nbarJ_var1) * (sum(logreturns_J1^2)/J_var1 - TSRV(pdata1,K=K_var1,J=J_var1)))
         }
     }
     if (is.null(noisevar2)) {
@@ -488,7 +488,7 @@ function (pdata1, pdata2, startIV1 = NULL, startIV2 = NULL, noisevar1 = NULL,
            sel.avg = seq(j, n_var2, J_var2)
            logreturns_J2 = c(logreturns_J2, diff(logprices2[sel.avg]))
         }        
-        noisevar2 = max(0,1/(2 * nbarJ_var2) * (sum(logreturns_J2^2)/J_var2 - RTAQ:::TSRV(pdata2,K=K_var2,J=J_var2)))
+        noisevar2 = max(0,1/(2 * nbarJ_var2) * (sum(logreturns_J2^2)/J_var2 - TSRV(pdata2,K=K_var2,J=J_var2)))
     }    
 
     if (!is.null(startIV1)) {
@@ -554,7 +554,8 @@ function (pdata1, pdata2, startIV1 = NULL, startIV2 = NULL, noisevar1 = NULL,
 
  
 
-TSCov = function (pdata, cor = FALSE, K = 300, J = 1, K_cov = NULL, J_cov = NULL, makePsd = FALSE) 
+TSCov = function (pdata, cor = FALSE, K = 300, J = 1, K_cov = NULL, J_cov = NULL, 
+                  K_var = NULL, J_var = NULL, makePsd = FALSE) 
 {
     if (!is.list(pdata)) {
         n = 1
@@ -566,20 +567,24 @@ TSCov = function (pdata, cor = FALSE, K = 300, J = 1, K_cov = NULL, J_cov = NULL
         }
     }
     if (n == 1) {
-        return(RTAQ:::TSRV(pdata, K = K, J = J))
+        return(TSRV(pdata, K = K, J = J))
     }
     if (n > 1) {
         cov = matrix(rep(0, n * n), ncol = n)
+        if( is.null(K_cov)){ K_cov = K }
+        if( is.null(J_cov)){ J_cov = J }
+        if( is.null(K_var)){ K_var = rep(K,n) }
+        if( is.null(J_var)){ J_var = rep(J,n) }
+        
         diagonal = c()
         for (i in 1:n) {
-            diagonal[i] = RTAQ:::TSRV(pdata[[i]], K = K, J = J)
+            diagonal[i] = TSRV(pdata[[i]], K = K_var[i], J = var[i])
         }
         diag(cov) = diagonal
-        if( is.null(K_cov)){ K_cov = K }
-        if( is.null(J_cov)){ J_cov = J }        
+      
         for (i in 2:n) {
             for (j in 1:(i - 1)) {
-                cov[i, j] = cov[j, i] = RTAQ:::TSCov_bi(pdata[[i]], 
+                cov[i, j] = cov[j, i] = TSCov_bi(pdata[[i]], 
                   pdata[[j]], K = K_cov, J = J_cov)
             }
         }
