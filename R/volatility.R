@@ -322,7 +322,7 @@ RTSRV = function (pdata, startIV = NULL, noisevar = NULL, K = 300, J = 1,
         vdelta_J = c(vdelta_J, diff(seconds[sel])/secday)
     }
     if (is.null(noisevar)) {
-        noisevar = max(0,1/(2 * nbarJ) * (sum(logreturns_J^2)/J - TSRV(pdata1,K=K,J=J)))        
+        noisevar = max(0,1/(2 * nbarJ) * (sum(logreturns_J^2)/J - TSRV(pdata=pdata,K=K,J=J)))        
     }
     if (!is.null(startIV)) {
         RTSRV = startIV
@@ -494,12 +494,12 @@ function (pdata1, pdata2, startIV1 = NULL, startIV2 = NULL, noisevar1 = NULL,
     if (!is.null(startIV1)) {
         RTSRV1 = startIV1
     }else{
-        RTSRV1 = RTSRV(pdata1, noisevar = noisevar1, K = K_var1, J = J_var1, eta = eta)      
+        RTSRV1 = RTSRV(pdata=pdata1, noisevar = noisevar1, K = K_var1, J = J_var1, eta = eta)      
     }
     if (!is.null(startIV2)) {
         RTSRV2 = startIV2
     }else{
-        RTSRV2 = RTSRV(pdata2, noisevar = noisevar2, K = K_var2, J = J_var2, eta = eta)      
+        RTSRV2 = RTSRV(pdata=pdata2, noisevar = noisevar2, K = K_var2, J = J_var2, eta = eta)      
     }
         
     # Refresh time is for the covariance calculation
