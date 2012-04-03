@@ -34,7 +34,6 @@ of stock i for day t.}
 \item{J_var}{vector of positive integers, for the diagonal variance elements the fast time scale returns are computed on prices that are J steps apart.}
 \item{makePsd}{ boolean, in case it is TRUE, the positive definite version of RTSCov is returned. FALSE by default.}
 \item{eta}{positive real number, squared standardized high-frequency returns that exceed eta are detected as jumps.}
-\item{makePsd}{ boolean, in case it is TRUE, the positive definite version of RTSCov is returned. FALSE by default.}
 }
 
 \value{
