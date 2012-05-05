@@ -1,5 +1,5 @@
-##UNIVARIATE:
-#Realized Volatility (RV)
+# UNIVARIATE: 
+# Realized Volatility (RV)
 RV = function(rdata,...){
   if(hasArg(data)){ rdata = data }
 returns=as.numeric(rdata);
@@ -298,7 +298,7 @@ thresholdCov = function(rdata, cor=FALSE, makeReturns=FALSE,...)	{
 #  sdmatrix = sqrt(diag(diag(covariance)));
 #  rcor = solve(sdmatrix)%*%covariance%*%solve(sdmatrix);
 #  return(rcor);
-#}
+# }
 
 RTSRV = function (pdata, startIV = NULL, noisevar = NULL, K = 300, J = 1, 
     eta = 9){
@@ -453,7 +453,7 @@ function (pdata1, pdata2, startIV1 = NULL, startIV2 = NULL, noisevar1 = NULL,
 
     
     if (   is.null(noisevar1)   ) {
-        logprices1 = log(as.numeric(pdata1))
+        logprices1 = log(as.numeric(pdata1))     
         n_var1 = length(logprices1)
         nbarK_var1 = (n_var1 - K_var1 + 1)/(K_var1) ;
         nbarJ_var1 = (n_var1 - J_var1 + 1)/(J_var1)

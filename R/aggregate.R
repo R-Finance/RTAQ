@@ -48,24 +48,24 @@ aggregatets = function (ts, FUN = "previoustick", on = "minutes", k = 1, weights
             secs = k
         }
         a = .index(ts2) + (secs - .index(ts2)%%secs)
-        ts3 = .xts(ts2, a,tz="GMT")
+        ts3 = .xts(ts2, a,tzone="GMT")
     }
     if (on == "hours") {
         secs = 3600
         a = .index(ts2) + (secs - .index(ts2)%%secs)
-        ts3 = .xts(ts2, a,tz="GMT")
+        ts3 = .xts(ts2, a,tzone="GMT")
     }
     if (on == "days") {
         secs = 24 * 3600
         a = .index(ts2) + (secs - .index(ts2)%%secs) - (24 * 
             3600)
-        ts3 = .xts(ts2, a,tz="GMT")
+        ts3 = .xts(ts2, a,tzone="GMT")
     }
     if (on == "weeks") {
         secs = 24 * 3600 * 7
         a = (.index(ts2) + (secs - (.index(ts2) + (3L * 86400L))%%secs)) - 
             (24 * 3600)
-        ts3 = .xts(ts2, a,tz="GMT")
+        ts3 = .xts(ts2, a,tzone="GMT")
     }
 
     if (!dropna) {
