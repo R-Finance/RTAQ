@@ -30,7 +30,8 @@
   return(zstat);
  }
 
- harModel = function(data, periods = c(1,5,22), RVest = c("RCov","RBPCov"), type="HARRV", jumptest="ABDJumptest",alpha=0.05,h=1,transform=NULL,...){  
+ harModel = function(data, periods = c(1,5,22), periodsJ = c(1,5,22), leverage=NULL, RVest = c("RCov","RBPCov"), type="HARRV", 
+                     jumptest="ABDJumptest",alpha=0.05,h=1,transform=NULL, ...){  
   nperiods = length(periods); # Number of periods to aggregate over
   nest = length(RVest);       # Number of RV estimators
   if( !is.null(transform) ){ Ftransform = match.fun(transform); }
@@ -40,95 +41,100 @@
    # Get the daily RMs (in a non-robust and robust way)
    RV1 = match.fun(  RVest[1]);
    RM1 = apply.daily( data, RV1 );
-   #save dates:
+   # save dates:
    alldates = index(RM1)
    if( nest == 2 ){ 
     RV2 = match.fun( RVest[2]); 
     RM2 = apply.daily( data, RV2 ); }
   } 
-  
-  
+    
   if( sum(data<0) == 0 ){ #The input is most likely already realized measures
-     dimdata = dim(data)[2]; 
-     alldates = index(data);
-     RM1 = data[,1];
-     if( dimdata > 1 ){ RM2 = data[,2]; } 
-     if( type != "HARRV" ){ warning("Please provide returns as input for the type of model you want to estimate. All your returns are positive which is quite unlikely honestly. Only for the HAR-RV model you can input realized measures.") }
+      dimdata = dim(data)[2]; 
+      alldates = index(data);
+      RM1 = data[,1];
+      if( dimdata > 1 ){ RM2 = data[,2]; } 
+      if( type != "HARRV" ){ warning("Please provide returns as input for the type of model you want to estimate. All your returns are positive which is quite unlikely honestly. Only for the HAR-RV model you can input realized measures.") }
      }
  
     # Get the matrix for estimation of linear model
-    maxp      = max(periods); #Number of aggregation levels
+    maxp      = max(periods,periodsJ); #max number of aggregation levels
+    if(!is.null(leverage)){ maxp = max(maxp,leverage) }
     n         = length(RM1);  #Number of Days
-    RVmatrix1 = matrix(nrow=n,ncol=nperiods);
-
-  for(i in 1:nperiods){ 
-   if(periods[i]==1){ RVmatrix1[,i] = RM1 
-   }else{ RVmatrix1[(periods[i]:n),i] = rollmean(x=RM1,k=periods[i],align="left")  }
-  } #end loop over periods for standard RV estimator
-  colnames(RVmatrix1) = paste("RV",periods,sep="");
   
-  # Aggregate and subselect y
-  if( h == 1 ){  y  = RM1[(maxp+1):n]; }
-  if( h != 1 ){ 
-      y = matrix( nrow=length(RM1), ncol=1 ); colnames(y) = "y";
-      y[(h:n),] = rollmean(x=RM1,k=h,align="left");
-      y = matrix(y[((maxp+h):n),],ncol=1); y=as.data.frame(y) }  
+    # Aggregate RV: 
+    RVmatrix1 = aggRV(RM1,periods);
+    if( nest==2 ){ RVmatrix2 = aggRV(RM2,periods); }  # In case a jumprobust estimator is supplied
   
-  # Only keep useful parts:
-  x1 = RVmatrix1[(maxp:(n-h)),];
+    # Aggregate and subselect y:
+    y = aggY(RM1,h,maxp);
   
- # TODO: add transformations here (srqr,log,..) see paper             
- if(nest==2){ # In case a jumprobust estimator is supplied
-   RVmatrix2 = matrix(nrow=n,ncol=nperiods);
-   for(i in 1:nperiods){ 
-     if(periods[i]==1){ RVmatrix2[,i] = RM2; 
-     }else{ RVmatrix2[(periods[i]:n),i] = rollmean(x=RM2,k=periods[i],align="left")  }
-     colnames(RVmatrix2) = paste("RV",periods,sep=""); 
-     x2 = RVmatrix2[(maxp:(n-h)),];
-   } #end loop over periods for robust RV estimator  
- }  
-
-  # Estimate the model parameters, according to type of model : 
-  # First model type: traditional HAR-RV: 
-  if( type == "HARRV" ){ 
-    if(!is.null(transform)){ y = Ftransform(y); x1 = Ftransform(x1) }                             
+   # Only keep useful parts: 
+   x1 = RVmatrix1[(maxp:(n-h)),]; 
+   if( nest==2 ){ x2 = RVmatrix2[(maxp:(n-h)),]; } # In case a jumprobust estimator is supplied 
+  
+   # Jumps:
+   if(type!="HARRV"){ # If model type is as such that you need jump component 
+     J = pmax( RM1 - RM2,0 ); # Jump contributions should be positive
+     J = aggJ(J,periodsJ);         
+   }
+  
+  if( !is.null(leverage) ){ 
+    if( sum(data<0) == 0 ){ warning("You cannot use leverage variables in the model in case your input consists of Realized Measures") }
+      # Get close-to-close returns
+      e = apply.daily(data,sum); #Sum logreturns daily     
+      # Get the rmins:
+      rmintemp = pmin(e,0);    
+      # Aggregate everything:
+      rmin = aggRV(rmintemp,periods=leverage,type="Rmin"); 
+      # Select:
+      rmin = rmin[(maxp:(n-h)),];
+       }else{ rmin = matrix(ncol=0,nrow=dim(x1)[1]) }
+        
+   ###############################
+   # Estimate the model parameters, according to type of model : 
+   # First model type: traditional HAR-RV: 
+   if( type == "HARRV" ){ 
+    if(!is.null(transform)){ y = Ftransform(y); x1 = Ftransform(x1) }
+      x1 = cbind(x1,rmin);
       model     = estimhar(y=y,x=x1); 
       model$transform = transform; model$h = h; model$type = "HARRV"; model$dates = alldates[(maxp+h):n];
       class(model) = c("harModel","lm"); 
       return( model )
-   } #End HAR-RV if cond
+  } #End HAR-RV if cond
 
   if( type == "HARRVJ" ){    
-      J = pmax( RM1 - RM2,0 );      #Jump contributions should be positive
-      J = matrix(J[(maxp:(n-h)),]); colnames(J) = "J"; 
+      J = J[(maxp:(n-h)),]; 
       x = cbind(x1,J);              # bind jumps to RV data 
       if(!is.null(transform)){ y = Ftransform(y); x = Ftransform(x); }       
-      model        = estimhar(y=y,x=x); 
+      x = cbind(x,rmin);
+      model = estimhar(y=y,x=x); 
       model$transform = transform; model$h = h; model$type = "HARRVJ"; model$dates = alldates[(maxp+h):n];
       class(model) = c("harModel","lm"); 
       return( model )    
   }#End HAR-RV-J if cond
   
-  if( type == "HARRVCJ" ){
-      # Get the jumps:
-      J = pmax( RM1 - RM2,0 );      # Jump contributions should be positive
+  if( type == "HARRVCJ" ){ 
       # Are the jumps significant? if not set to zero:
       if( jumptest=="ABDJumptest" ){ 
-        
       TQ = apply.daily(data, TQfun); 
+      J = J[,1];
       teststats    = ABDJumptest(RV=RM1,BPV=RM2,TQ=TQ ); 
       }else{ jtest = match.fun(jumptest); teststats = jtest(data,...) }  
       Jindicators  = teststats > qnorm(1-alpha); 
       J[!Jindicators] = 0; 
-      J = matrix(J[(maxp:(n-h)),]); colnames(J) = "J"; Jindicators = Jindicators[(maxp:(n-h))];
-      # Get continuus components if necessary RV measures if necessary:
-      Cmatrix = matrix( nrow = dim(x1)[1], ncol = dim(x1)[2] ); 
-      Cmatrix[Jindicators,]    = x2[Jindicators,];      #Fill with robust one in case of jump
-      Cmatrix[(!Jindicators),] = x1[(!Jindicators),];   #Fill with non-robust one in case of no-jump  
-      colnames(Cmatrix) = paste("C",periods,sep="");
-      
-      x = cbind(Cmatrix,J);               # bind jumps to RV data
-      if(!is.null(transform)){ y = Ftransform(y); x = Ftransform(x); }       
+      # Get continuus components if necessary RV measures if necessary: 
+      Cmatrix = matrix( nrow = dim(RVmatrix1)[1], ncol = 1 );
+      Cmatrix[Jindicators,]    = RVmatrix2[Jindicators,1];      #Fill with robust one in case of jump
+      Cmatrix[(!Jindicators)]  = RVmatrix1[(!Jindicators),1];   #Fill with non-robust one in case of no-jump  
+      # Aggregate again:
+      Cmatrix <- aggRV(Cmatrix,periods,type="C");
+      Jmatrix <- aggJ(J,periodsJ);
+      # subset again:
+      Cmatrix <- Cmatrix[(maxp:(n-h)),];
+      Jmatrix <- Jmatrix[(maxp:(n-h)),];            
+      x = cbind(Cmatrix,Jmatrix);               # bind jumps to RV data      
+      if(!is.null(transform)){ y = Ftransform(y); x = Ftransform(x); }  
+      x = cbind(x,rmin);
       model = estimhar( y=y, x=x ); 
       model$transform = transform; model$h = h; model$type = "HARRVCJ"; model$dates = alldates[(maxp+h):n];      
       class(model) = c("harModel","lm");
@@ -136,7 +142,7 @@
       } 
 
 } #End function harModel
- 
+ #################################################################
  estimhar = function(y, x){ #Potentially add stuff here
    colnames(y)="y";
    output = lm( formula(y~x), data=cbind(y,x));
@@ -158,6 +164,42 @@
   return(list(modeldescription,betas))  
  }
  
+ aggRV <- function(RM1,periods,type="RV"){
+   n = length(RM1);
+   nperiods = length(periods);
+   RVmatrix1 = matrix(nrow=n,ncol=nperiods);
+   for(i in 1:nperiods){ 
+     if(periods[i]==1){ RVmatrix1[,i] = RM1; 
+     }else{ RVmatrix1[(periods[i]:n),i] = rollmean(x=RM1,k=periods[i],align="left")  }
+   } #end loop over periods for standard RV estimator
+   colnames(RVmatrix1) = paste(type,periods,sep="");
+   return(RVmatrix1);
+ }
+
+ aggJ <- function( J, periodsJ ){
+   n = length(J);
+   nperiods = length(periodsJ);
+   JM = matrix(nrow=n,ncol=nperiods);
+   for(i in 1:nperiods){ 
+     if(periodsJ[i]==1){ JM[,i] = J; 
+     }else{ JM[(periodsJ[i]:n),i] = rollmean( x=J, k=periodsJ[i], align="left")  }
+   } # End loop over periods for standard RV estimator
+   colnames(JM) = paste("J",periodsJ,sep="");
+   return(JM)
+ }
+ 
+ aggY = function(RM1,h,maxp){
+   n         = length(RM1);
+   if( h == 1 ){  y  = RM1[(maxp+1):n]; }
+   if( h != 1 ){ 
+     y = matrix( nrow=length(RM1), ncol=1 ); colnames(y) = "y";
+     y[(h:n),] = rollmean(x=RM1,k=h,align="left");
+     y = matrix(y[((maxp+h):n),],ncol=1); y=as.data.frame(y) }  
+   return(y);
+ }
+ 
+ 
+######################################################################### 
  # Print method for harmodel:  
  print.harModel = function(x, digits = max(3, getOption("digits") - 3), ...){ 
    formula = getHarmodelformula(x); modeldescription = formula[[1]]; betas = formula[[2]];
@@ -202,6 +244,7 @@
   observed = x$model$y;
   fitted   = x$fitted.values;
   dates    = x$dates;
+  dates    = as.POSIXct(dates);
   observed = xts(observed, order.by=dates);
   fitted   = xts(fitted, order.by=dates);
   type     = x$type;
@@ -214,7 +257,6 @@
   #  axis(1,time(b)[ind], format(time(b)[ind],), las=2, cex.axis=0.8); not used anymore
   #  axis(2);
   lines(fitted,col="blue",lwd=2);
-  legend("topleft", c("Observed RV","Forecasted RV"), cex=0.8, col=c("red","blue"),lty=1, lwd=2, bty="n"); 
+  legend("topleft", c("Observed RV","Forecasted RV"), cex=1.1, col=c("red","blue"),lty=1, lwd=2, bty="n"); 
 }
- 
  
